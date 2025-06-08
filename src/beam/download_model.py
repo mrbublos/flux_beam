@@ -20,9 +20,13 @@ VOLUME_PATH = "./models"
     volumes=[Volume(name="models", mount_path=VOLUME_PATH)],
     )
 def upload():
+    # snapshot_download(
+    #     repo_id="black-forest-labs/FLUX.1-schnell",
+    #     local_dir=f"{VOLUME_PATH}/flux_schnell"
+    # )
     snapshot_download(
-        repo_id="black-forest-labs/FLUX.1-schnell",
-        local_dir=f"{VOLUME_PATH}/flux_schnell"
+        repo_id="microsoft/Florence-2-large",
+        local_dir=f"{VOLUME_PATH}/florence_2_large",
     )
 
     print("Files downloaded successfully")

@@ -5,18 +5,20 @@ from beam import function, Volume, Image, env
 from src.create_config import TrainConfig
 from src.train import train_user_lora
 
-VOLUME_PATH = "./models"
-RAW_VOLUME_PATH = "./raw_data"
-PROCESSED_VOLUME_PATH = "./processed"
-LORAS_VOLUME_PATH = "./loras"
+VOLUME_PATH = "/mnt/code/models"
+RAW_VOLUME_PATH = "/mnt/code/raw_data"
+PROCESSED_VOLUME_PATH = "/mnt/code/processed"
+LORAS_VOLUME_PATH = "/mnt/code/loras"
 
 
 @function(
     image=Image(python_version="python3.11")
     .add_commands([
-        "git clone https://github.com/mrbublos/character_training.git",
-        "cd character_training && git submodule update --init --recursive",
-        "chmod +x ./character_training/start_training.sh",
+        "cd /workspace && git clone https://github.com/mrbublos/character_training.git",
+        "cd /workspace/character_training && git submodule update --init --recursive",
+        "cd /workspace/character_training && git checkout runpod_serverless",
+        "chmod +x /workspace/character_training/start_training.sh",
+        "echo 1",
     ]).add_python_packages(
         [
             "accelerate",
@@ -50,6 +52,7 @@ LORAS_VOLUME_PATH = "./loras"
             "pyyaml",
             "safetensors",
             "sentencepiece",
+            "setuptools<70",
             "tensorboard",
             "timm",
             "toml",
@@ -58,14 +61,13 @@ LORAS_VOLUME_PATH = "./loras"
             "torchvision",
             "tqdm",
             "transformers==4.49.0",
-            "yaml",
         ]
     ),
     gpu="T4",
     secrets=["HF_TOKEN"],
     env={
-        "PREPROCESSING_MODEL": "./models/florence_2_large",
-        "TRAINING_MODEL": "./models/flux_schnell",
+        "PREPROCESSING_MODEL": "/mnt/code/models/florence_2_large",
+        "TRAINING_MODEL": "/mnt/code/models/flux_schnell",
         "HF_OFFLINE": "1",
     },
     volumes=[
@@ -77,14 +79,19 @@ LORAS_VOLUME_PATH = "./loras"
 )
 def run():
     print("Starting lora train...")
+
+    # files = os.listdir("/workspace/character_training")
+    # print(files)
+
     user_id="test_arina"
     train_user_lora(TrainConfig(
         user_id=user_id,
         steps=2,
         processed_images_dir=f"{PROCESSED_VOLUME_PATH}/{user_id}",
-        default_config="./character_training/configs/train_config_1h100.yaml",
+        default_config="/workspace/character_training/config/train_config_1h100.yaml",
         model_name=os.getenv("TRAINING_MODEL"),
-        lora_output_dir=f"./{LORAS_VOLUME_PATH}/{user_id}",
+        lora_output_dir=f"{LORAS_VOLUME_PATH}/{user_id}",
+        raw_images_dir=f"{RAW_VOLUME_PATH}/{user_id}",
     ))
     print("Lora train completed.")
 

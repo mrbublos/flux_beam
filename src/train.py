@@ -10,14 +10,11 @@ def train_user_lora(event: TrainConfig):
     user_id = event.user_id
 
     try:
-        user_photos_raw = f"{event.raw_images_dir}/{user_id}"
-        user_photos_processed = f"{event.processed_images_dir}/{user_id}"
-
-        os.makedirs(os.path.dirname(user_photos_raw + "/"), exist_ok=True)
-        os.makedirs(os.path.dirname(user_photos_processed + "/"), exist_ok=True)
+        os.makedirs(os.path.dirname(event.raw_images_dir + "/"), exist_ok=True)
+        os.makedirs(os.path.dirname(event.processed_images_dir + "/"), exist_ok=True)
 
         config_name = create_config(event)
-        script_path = f"./start_training.sh"
+        script_path = f"/workspace/character_training/start_training_beam.sh"
 
         logger.debug(f"Starting training for {user_id}")
 

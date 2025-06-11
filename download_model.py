@@ -25,8 +25,8 @@ def upload():
     #     local_dir=f"{VOLUME_PATH}/flux_schnell"
     # )
     snapshot_download(
-        repo_id="microsoft/Florence-2-large",
-        local_dir=f"{VOLUME_PATH}/florence_2_large",
+        repo_id="ostris/FLUX.1-schnell-training-adapter",
+        local_dir=f"{VOLUME_PATH}/schnell_training_adapter",
     )
 
     print("Files downloaded successfully")

@@ -63,11 +63,10 @@ LORAS_VOLUME_PATH = "/mnt/code/loras"
             "transformers==4.49.0",
         ]
     ),
-    gpu="T4",
+    gpu="H100",
     secrets=["HF_TOKEN"],
     env={
         "PREPROCESSING_MODEL": "/mnt/code/models/florence_2_large",
-        "TRAINING_MODEL": "/mnt/code/models/flux_schnell",
         "HF_OFFLINE": "1",
     },
     volumes=[
@@ -88,9 +87,8 @@ def run():
         user_id=user_id,
         steps=2,
         processed_images_dir=f"{PROCESSED_VOLUME_PATH}/{user_id}",
-        default_config="/workspace/character_training/config/train_config_1h100.yaml",
-        model_name=os.getenv("TRAINING_MODEL"),
-        lora_output_dir=f"{LORAS_VOLUME_PATH}/{user_id}",
+        default_config="/mnt/code/configs/schnell.yaml",
+        lora_output_dir=LORAS_VOLUME_PATH,
         raw_images_dir=f"{RAW_VOLUME_PATH}/{user_id}",
     ))
     print("Lora train completed.")

@@ -10,50 +10,43 @@ class TrainConfig:
             steps,
             processed_images_dir,
             default_config,
-            model_name,
             lora_output_dir,
             raw_images_dir,
     ):
         self.user_id = user_id
         self.steps = steps
-        self.model_name = model_name
         self.processed_images_dir = processed_images_dir
         self.default_config = default_config
         self.lora_output_dir = lora_output_dir
         self.raw_images_dir = raw_images_dir
 
 
-def create_config(trainConfig: TrainConfig):
-    logger.info(f"Updating config for {trainConfig.user_id}")
-    with open(trainConfig.default_config, 'r') as file:
+def create_config(train_config: TrainConfig):
+    logger.info(f"Updating config for {train_config.user_id}")
+    with open(train_config.default_config, 'r') as file:
         config = yaml.safe_load(file)
 
     old_input_folder = config['config']['process'][0]['datasets'][0]['folder_path']
-    input_folder = trainConfig.processed_images_dir
+    input_folder = train_config.processed_images_dir
     config['config']['process'][0]['datasets'][0]['folder_path'] = input_folder
     logger.debug(f"Updated config input folder to {input_folder} from {old_input_folder}")
 
     old_output_folder = config['config']['name']
-    output_folder =trainConfig.user_id
+    output_folder =train_config.user_id
     config['config']['name'] = output_folder
     logger.debug(f"Updated config output folder to {output_folder} from {old_output_folder}")
 
     old_steps = config['config']['process'][0]['train']['steps']
-    new_steps = trainConfig.steps or old_steps
+    new_steps = train_config.steps or old_steps
     config['config']['process'][0]['train']['steps'] = new_steps
     logger.debug(f"Updated config steps from {old_steps} to {new_steps}")
 
     old_training_folder = config['config']['process'][0]['training_folder']
-    new_training_folder = trainConfig.lora_output_dir
+    new_training_folder = train_config.lora_output_dir
     config['config']['process'][0]['training_folder'] = new_training_folder
     logger.debug(f"Updated config training_folder from {old_training_folder} to {new_training_folder}")
 
-    old_model = config['config']['process'][0]['model']['name_or_path']
-    new_model = trainConfig.model_name
-    config['config']['process'][0]['model']['name_or_path'] = new_model
-    logger.debug(f"Updated config model from {old_model} to {new_model}")
-
-    config_name = f"{trainConfig.raw_images_dir}/config.yaml"
+    config_name = f"{train_config.raw_images_dir}/config.yaml"
     with open(config_name, 'w') as file:
         yaml.dump(config, file)
 

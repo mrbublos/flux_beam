@@ -5,3 +5,7 @@ torch
 Pillow
 tqdm
 safetensors
+pillow_heif
+einops
+timm
+oyaml

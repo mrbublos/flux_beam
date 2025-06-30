@@ -1,6 +1,6 @@
-from beam import function, Volume, Image, env
+from beam import function, Volume, Image
 
-from src.preprocess_images import start
+from src.app.preprocess_images import start
 
 VOLUME_PATH = "./models"
 RAW_VOLUME_PATH = "./raw_data"

@@ -1,9 +1,7 @@
-import os
+from beam import function, Volume, Image
 
-from beam import function, Volume, Image, env
-
-from src.create_config import TrainConfig
-from src.train import train_user_lora
+from src.app.create_config import TrainConfig
+from src.app.train import train_user_lora
 
 VOLUME_PATH = "/mnt/code/models"
 RAW_VOLUME_PATH = "/mnt/code/raw_data"
@@ -85,7 +83,7 @@ def run():
     user_id="test_arina"
     train_user_lora(TrainConfig(
         user_id=user_id,
-        steps=2,
+        steps=500,
         processed_images_dir=f"{PROCESSED_VOLUME_PATH}/{user_id}",
         default_config="/mnt/code/configs/schnell.yaml",
         lora_output_dir=LORAS_VOLUME_PATH,

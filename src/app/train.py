@@ -1,8 +1,8 @@
 import os
 import subprocess
 
-from src.create_config import create_config, TrainConfig
-from src.logger import Logger
+from src.app.create_config import create_config, TrainConfig
+from src.app.logger import Logger
 
 logger = Logger(__name__)
 

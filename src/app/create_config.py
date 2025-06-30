@@ -1,4 +1,4 @@
-from src.logger import Logger
+from src.app.logger import Logger
 import yaml
 
 logger = Logger("create_config")

@@ -1,6 +1,6 @@
 from beam import function, Volume, Image
 
-from src.app.preprocess_images import start
+from src.app.preprocess_images import preprocess_images
 
 VOLUME_PATH = "./models"
 RAW_VOLUME_PATH = "./raw_data"
@@ -38,7 +38,7 @@ PROCESSED_VOLUME_PATH = "./processed"
 )
 def run():
     print("Starting image preprocessing...")
-    start(input_dir="./raw_data/test_arina", output_dir="./processed/test_arina")
+    preprocess_images(input_dir="./raw_data/test_arina", output_dir="./processed/test_arina")
     print("Image preprocessing completed.")
 
 

@@ -166,7 +166,7 @@ def process_directory(output_dir, input_dir):
                     sys.exit(1)
 
 
-def start(input_dir, output_dir):
+def preprocess_images(input_dir, output_dir):
     print(f"Output processing dir {output_dir}")
     print(f"Input processing dir {input_dir}")
 
@@ -193,4 +193,4 @@ def start(input_dir, output_dir):
 
 
 if __name__ == "__main__":
-    start(output_dir="./tmp/processed", input_dir="./tmp/raw_images")
+    preprocess_images(output_dir="./tmp/processed", input_dir="./tmp/raw_images")

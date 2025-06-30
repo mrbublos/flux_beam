@@ -59,8 +59,6 @@ logger = Logger(__name__)
     ],
 )
 def run():
-/* <<<<<<<<<<<<<<  ✨ Windsurf Command ⭐ >>>>>>>>>>>>>>>> */
-def run():
     """
     Execute the LoRA training and inference process.
 
@@ -71,7 +69,14 @@ def run():
 
     Environment and settings:
 
-/* <<<<<<<<<<  94d8f576-e1c6-4a66-b803-4022e28c5e21  >>>>>>>>>>> */
+    The function performs the following steps:
+    1. Logs the start of the LoRA training.
+    2. Defines user ID and LoRA styles.
+    3. Calls the inference function with specified arguments to generate an image.
+    4. Saves the generated image and retrieves its public URL.
+    5. Logs successful completion and output URL.
+    """
+
     logger.info("Starting lora train...")
 
     # files = os.listdir("/workspace/character_training")

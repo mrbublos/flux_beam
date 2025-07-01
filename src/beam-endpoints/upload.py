@@ -77,7 +77,8 @@ def file_manipulator(**inputs):
     It stores the file in a volume under a folder named userId.
     """
     if not "action" in inputs:
-        return {"status": "error", "message": "action is required."}
+        print("action is required.")
+        raise Exception("action is required.")
 
     action = inputs["action"]
     user_id = inputs["user_id"] if "user_id" in inputs else None
@@ -89,4 +90,4 @@ def file_manipulator(**inputs):
     elif action == "clear":
         return clear_files(user_id)
     else:
-        return {"status": "error", "message": "Invalid action."}
+        raise Exception(f"Unknown action: {action}")

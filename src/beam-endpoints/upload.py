@@ -6,10 +6,8 @@ from beam import task_queue, Image, Volume
 
 def store_file(user_id: str, base64_data: str, extension: str):
     if not user_id or not base64_data or not extension:
-        return {
-            "status": "error",
-            "message": "userId, base64_data, and extension are required.",
-        }
+        print("Missing required parameters user_id, base64_data, and extension")
+        raise Exception("Missing required parameters")
 
     # Create a directory for the user if it doesn't exist
     # The path is relative to the volume mount path
@@ -20,18 +18,20 @@ def store_file(user_id: str, base64_data: str, extension: str):
     try:
         image_data = base64.b64decode(base64_data)
     except Exception as e:
-        return {"status": "error", "message": f"Invalid base64 data: {str(e)}"}
+        print(f"Failed to decode base64 data: {e}")
+        raise Exception(f"Failed to decode base64 data: {str(e)}")
 
     # Generate a unique filename
     file_name = f"{uuid.uuid4()}.{extension}"
     file_path = os.path.join(user_folder_path, file_name)
-
+    print(f"Storing file {file_path}")
     # Write the file to the persistent volume
     try:
         with open(file_path, "wb") as f:
             f.write(image_data)
     except Exception as e:
-        return {"status": "error", "message": f"Failed to save file: {str(e)}"}
+        print(f"Failed to store file: {e}")
+        raise Exception(f"Failed to store file: {str(e)}")
 
     # Return the path to the stored file
     return {"status": "success", "file_path": file_path}
@@ -45,6 +45,7 @@ def clear_files(user_id: str):
             shutil.rmtree(user_folder_path)
     except Exception as e:
         print(f"Failed to clear files for user {user_id}: {e}")
+        raise Exception(f"Failed to clear files for user {user_id}: {str(e)}")
 
     try:
         processed_folder_path = f"./processed/{user_id}"
@@ -53,6 +54,7 @@ def clear_files(user_id: str):
             shutil.rmtree(processed_folder_path)
     except Exception as e:
         print(f"Failed to clear files for user {user_id}: {e}")
+        raise Exception(f"Failed to clear files for user {user_id}: {str(e)}")
 
     return {"status": "success"}
 

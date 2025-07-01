@@ -71,7 +71,11 @@ from src.app.train import train_user_lora
         Volume(name="loras", mount_path="/mnt/code/loras"),
     ],
 )
-def train(user_id: str, steps: int = 500):
+def train(**inputs):
+
+    user_id = inputs["user_id"]
+    steps = inputs["steps"]
+
     print(f"Starting lora train for user {user_id}...")
 
     print("Starting image preprocessing...")

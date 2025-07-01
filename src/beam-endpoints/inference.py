@@ -1,4 +1,4 @@
-from beam import Volume, Image, Output, endpoint
+from beam import Volume, Image, Output, task_queue
 
 from src.app.inference import inference, GenerateArgs, LoraStyle
 from src.app.logger import Logger
@@ -10,7 +10,7 @@ LORAS_VOLUME_PATH = "/mnt/code/loras"
 
 logger = Logger(__name__)
 
-@endpoint(
+@task_queue(
     image=Image(python_version="python3.11")
     .add_python_packages(
         [
@@ -58,7 +58,14 @@ logger = Logger(__name__)
         Volume(name="loras", mount_path=LORAS_VOLUME_PATH),
     ],
 )
-def run(user_id: str, lora_styles: list[LoraStyle], prompt: str):
+def run(**inputs):
+
+    user_id = inputs["user_id"]
+    prompt = inputs["prompt"]
+    lora_styles = [] # inputs["lora_styles"]
+
+    logger.info(f"Running inference for user {user_id} with prompt: {prompt}")
+
     logger.info("Starting lora train...")
 
     # files = os.listdir("/workspace/character_training")
@@ -83,10 +90,5 @@ def run(user_id: str, lora_styles: list[LoraStyle], prompt: str):
     output = Output.from_pil_image(pil_result)
     output.save()
 
-    # Retrieve pre-signed URL for output file
-    url = output.public_url(expires=400)
-    logger.info(f"Inference completed successfully. Output saved to: {url}")
-    return url
+    logger.info(f"Inference completed successfully for {user_id}.")
 
-if __name__ == "__main__":
-    run()

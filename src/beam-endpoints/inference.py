@@ -1,6 +1,6 @@
 from beam import Volume, Image, Output, task_queue
 
-from src.app.inference import inference, GenerateArgs, LoraStyle
+from src.app.inference import inference, GenerateArgs, get_generator
 from src.app.logger import Logger
 
 VOLUME_PATH = "/mnt/code/models"
@@ -9,6 +9,14 @@ PROCESSED_VOLUME_PATH = "/mnt/code/processed"
 LORAS_VOLUME_PATH = "/mnt/code/loras"
 
 logger = Logger(__name__)
+
+generator = None
+
+def on_start():
+    logger.info("Inference endpoint started")
+    global generator
+    generator = get_generator()
+    logger.info("Generator loaded")
 
 @task_queue(
     name="inference",
@@ -58,6 +66,7 @@ logger = Logger(__name__)
         Volume(name="processed", mount_path=PROCESSED_VOLUME_PATH),
         Volume(name="loras", mount_path=LORAS_VOLUME_PATH),
     ],
+    on_start=on_start,
 )
 def run(**inputs):
 
@@ -86,7 +95,7 @@ def run(**inputs):
         width=1024,
         height=1024,
         guidance=3.5,
-    ))
+    ), generator)
 
     output = Output.from_pil_image(pil_result)
     output.save()

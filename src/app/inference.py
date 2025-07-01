@@ -207,14 +207,16 @@ class FluxGenerator:
             logger.error(f"Error generating image {e}")
             raise RuntimeError(f"Image generation failed: {str(e)}")
 
+def get_generator() -> FluxGenerator:
+    return FluxGenerator()
 
-def inference(args: GenerateArgs) -> Tuple[PILImage, bytes]:
+def inference(args: GenerateArgs, generator: Optional[FluxGenerator] = None) -> Tuple[PILImage, bytes]:
     """RunPod handler function"""
     try:
         logger.info(f"Running inference for user {args.user_id} with prompt: {args.prompt}")
         logger.info("Loading FluxGenerator")
 
-        generator = FluxGenerator()
+        generator = get_generator() if not generator else generator
 
         logger.info("Generating image")
         # Generate image

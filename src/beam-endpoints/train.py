@@ -1,12 +1,12 @@
-from beam import App, Runtime, Image, Volume, endpoint
+from beam import Image, Volume, task_queue
 
 from src.app.create_config import TrainConfig
 from src.app.preprocess_images import preprocess_images
 from src.app.train import train_user_lora
 
 
-@endpoint(
-    cpu=1,
+@task_queue(
+    # cpu=2,
     memory="32Gi",
     gpu="H100",
     image=Image(python_version="python3.11")

@@ -11,6 +11,7 @@ LORAS_VOLUME_PATH = "/mnt/code/loras"
 logger = Logger(__name__)
 
 @task_queue(
+    name="inference",
     image=Image(python_version="python3.11")
     .add_python_packages(
         [

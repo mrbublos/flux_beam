@@ -7,6 +7,7 @@ from src.app.train import train_user_lora
 
 @task_queue(
     # cpu=2,
+    name="lora_training",
     memory="32Gi",
     gpu="H100",
     image=Image(python_version="python3.11")

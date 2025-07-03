@@ -25,6 +25,8 @@ os.environ["CUDA_VISIBLE_DEVICES"] = str(1)
 
 logger = Logger("FluxGenerator")
 
+_generator_instance = None
+
 
 class LoraStyle(BaseModel):
     path: str
@@ -133,6 +135,9 @@ class FluxGenerator:
 
     def generate(self, args: GenerateArgs) -> Tuple[PILImage, bytes]:
         """Generate image from input parameters"""
+        lora_names = []
+        lora_scales = []
+
         try:
             # Encode prompt
             with torch.inference_mode():
@@ -144,9 +149,6 @@ class FluxGenerator:
                 )
 
             # Handle LoRA loading
-            lora_names = []
-            lora_scales = []
-
             if args.lora_personal:
                 personal_lora = f"{USER_MODELS}/{args.user_id}/{args.user_id}.safetensors"
                 logger.info(f"Using personal style {personal_lora}")
@@ -180,10 +182,6 @@ class FluxGenerator:
                     output_type="latent"
                 ).images
 
-            # Unload LoRAs if used
-            if lora_names:
-                self.model.unload_lora_weights(reset_to_overwritten_params=True)
-
             flush()
 
             logger.info("Decoding image")
@@ -206,17 +204,28 @@ class FluxGenerator:
         except Exception as e:
             logger.error(f"Error generating image {e}")
             raise RuntimeError(f"Image generation failed: {str(e)}")
+        finally:
+            # Unload LoRAs if used
+            if lora_names:
+                self.model.unload_lora_weights(reset_to_overwritten_params=True)
+                logger.info(f"Unloaded LoRA weights: {lora_names}")
+
+            flush()
 
 def get_generator() -> FluxGenerator:
-    return FluxGenerator()
+    global _generator_instance
+    if _generator_instance is None:
+        logger.info("Initializing FluxGenerator...")
+        _generator_instance = FluxGenerator()
+    return _generator_instance
 
 def inference(args: GenerateArgs, generator: Optional[FluxGenerator] = None) -> Tuple[PILImage, bytes]:
     """RunPod handler function"""
     try:
         logger.info(f"Running inference for user {args.user_id} with prompt: {args.prompt}")
-        logger.info("Loading FluxGenerator")
 
-        generator = get_generator() if not generator else generator
+        if generator is None:
+            generator = get_generator()
 
         logger.info("Generating image")
         # Generate image

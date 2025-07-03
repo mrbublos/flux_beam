@@ -17,6 +17,7 @@ def on_start():
     global generator
     generator = get_generator()
     logger.info("Generator loaded")
+    return generator
 
 @task_queue(
     name="inference",
@@ -52,7 +53,7 @@ def on_start():
             "uvicorn",
         ]
     ),
-    gpu="H100",
+    gpu=["A100-40", "H100"],
     secrets=["HF_TOKEN"],
     env={
         "STYLES_FOLDER": "/mnt/code/loras/common",
@@ -68,7 +69,7 @@ def on_start():
     ],
     on_start=on_start,
 )
-def run(**inputs):
+def run(context, **inputs):
 
     user_id = inputs["user_id"]
     prompt = inputs["prompt"]
@@ -95,10 +96,12 @@ def run(**inputs):
         width=1024,
         height=1024,
         guidance=3.5,
-    ), generator)
+    ), context.on_start_value)
 
     output = Output.from_pil_image(pil_result)
     output.save()
 
     logger.info(f"Inference completed successfully for {user_id}.")
 
+if __name__ == "__main__":
+    run.put(user_id="test_arina", prompt="lady with a cat")

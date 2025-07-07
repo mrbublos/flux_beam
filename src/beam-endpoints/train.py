@@ -1,9 +1,14 @@
+import torch
 from beam import Image, Volume, task_queue
 
 from src.app.create_config import TrainConfig
 from src.app.preprocess_images import preprocess_images
 from src.app.train import train_user_lora
 
+def on_start():
+    torch.cuda.empty_cache()
+    torch.cuda.reset_max_memory_allocated()
+    torch.cuda.reset_peak_memory_stats()
 
 @task_queue(
     # cpu=2,
@@ -71,6 +76,7 @@ from src.app.train import train_user_lora
         Volume(name="processed", mount_path="/mnt/code/processed"),
         Volume(name="loras", mount_path="/mnt/code/loras"),
     ],
+    on_start=on_start,
 )
 def train(**inputs):
 

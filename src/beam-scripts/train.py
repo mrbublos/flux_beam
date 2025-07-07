@@ -1,3 +1,4 @@
+import torch
 from beam import function, Volume, Image
 
 from src.app.create_config import TrainConfig
@@ -62,6 +63,8 @@ LORAS_VOLUME_PATH = "/mnt/code/loras"
         ]
     ),
     gpu="H100",
+    memory="32Gi",
+    cpu=2,
     secrets=["HF_TOKEN"],
     env={
         "PREPROCESSING_MODEL": "/mnt/code/models/florence_2_large",
@@ -85,7 +88,7 @@ def run():
         user_id=user_id,
         steps=500,
         processed_images_dir=f"{PROCESSED_VOLUME_PATH}/{user_id}",
-        default_config="/mnt/code/configs/schnell.yaml",
+        default_config="/mnt/code/configs/dev.yaml",
         lora_output_dir=LORAS_VOLUME_PATH,
         raw_images_dir=f"{RAW_VOLUME_PATH}/{user_id}",
     ))

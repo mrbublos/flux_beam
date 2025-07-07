@@ -21,7 +21,7 @@ PROCESSED_VOLUME_PATH = "./processed"
             "pillow_heif",
             "einops",
             "timm",
-            "yaml",
+            "oyaml",
         ]
     ),
     gpu="T4",

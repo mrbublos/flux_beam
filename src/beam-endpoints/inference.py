@@ -58,7 +58,7 @@ def on_start():
     env={
         "STYLES_FOLDER": "/mnt/code/loras/common",
         "USER_MODELS_FOLDER": "/mnt/code/loras",
-        "MODEL_NAME": "/mnt/code/models/flux_schnell",
+        "MODEL_NAME": "/mnt/code/models/flux_dev",
         "HF_OFFLINE": "1",
     },
     volumes=[

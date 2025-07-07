@@ -138,6 +138,8 @@ class FluxGenerator:
         lora_names = []
         lora_scales = []
 
+        flush()
+
         try:
             # Encode prompt
             with torch.inference_mode():

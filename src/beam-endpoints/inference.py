@@ -1,6 +1,6 @@
 from beam import Volume, Image, Output, task_queue
 
-from src.app.inference import inference, GenerateArgs, get_generator
+from src.app.inference import inference, GenerateArgs, get_generator, LoraStyle
 from src.app.logger import Logger
 
 VOLUME_PATH = "/mnt/code/models"
@@ -83,15 +83,15 @@ def run(context, **inputs):
     # print(files)
 
     # user_id = "test_arina"
-    # lora_styles = [
-    #     LoraStyle(path=f"Disney-Studios-Flux-000008.safetensors", scale=0.7, name="disney"),
-    #     LoraStyle(path=f"amateurphoto-v6-forcu.safetensors", scale=0.7, name="realistic"),
-    # ]
+    lora_styles = [
+        LoraStyle(path=f"Disney-Studios-Flux-000008.safetensors", scale=0.7, name="disney"),
+        LoraStyle(path=f"amateurphoto-v6-forcu.safetensors", scale=0.7, name="realistic"),
+    ]
     pil_result, bytes_result = inference(GenerateArgs(
         user_id=user_id,
-        lora_styles=[],
+        lora_styles=lora_styles,
         lora_personal=True,
-        num_steps=5,
+        num_steps=20,
         prompt=prompt,
         width=1024,
         height=1024,

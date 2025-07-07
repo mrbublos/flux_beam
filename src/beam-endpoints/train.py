@@ -93,7 +93,7 @@ def train(**inputs):
         user_id=user_id,
         steps=steps,
         processed_images_dir=f"/mnt/code/processed/{user_id}",
-        default_config="/mnt/code/configs/schnell.yaml",
+        default_config="/mnt/code/configs/dev.yaml",
         lora_output_dir="/mnt/code/loras",
         raw_images_dir=f"/mnt/code/raw_data/{user_id}",
     ))

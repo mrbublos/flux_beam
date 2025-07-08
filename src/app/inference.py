@@ -55,6 +55,7 @@ def flush():
 
 class FluxGenerator:
     def __init__(self):
+        flush()
         self.setup_environment()
         self.load_models()
         os.makedirs(STYLES_FOLDER, exist_ok=True)

@@ -73,7 +73,8 @@ def run(context, **inputs):
 
     user_id = inputs["user_id"]
     prompt = inputs["prompt"]
-    lora_styles = [] # inputs["lora_styles"]
+    num_steps = inputs["num_steps"] if "num_steps" in inputs else 28
+    lora_styles = inputs["lora_styles"] if "lora_styles" in inputs else []
 
     logger.info(f"Running inference for user {user_id} with prompt: {prompt}")
 
@@ -91,8 +92,8 @@ def run(context, **inputs):
         user_id=user_id,
         lora_styles=lora_styles,
         lora_personal=True,
-        num_steps=20,
-        prompt=prompt,
+        num_steps=num_steps,
+        prompt=prompt + " U5ER",
         width=1024,
         height=1024,
         guidance=3.5,

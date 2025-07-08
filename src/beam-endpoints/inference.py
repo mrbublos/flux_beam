@@ -8,6 +8,11 @@ RAW_VOLUME_PATH = "/mnt/code/raw_data"
 PROCESSED_VOLUME_PATH = "/mnt/code/processed"
 LORAS_VOLUME_PATH = "/mnt/code/loras"
 
+STYLES = ({
+    "disney": LoraStyle(path=f"Disney-Studios-Flux-000008.safetensors", scale=0.7, name="disney"),
+    "realistic": LoraStyle(path=f"amateurphoto-v6-forcu.safetensors", scale=0.7, name="realistic"),
+})
+
 logger = Logger(__name__)
 
 generator = None
@@ -74,26 +79,18 @@ def run(context, **inputs):
     user_id = inputs["user_id"]
     prompt = inputs["prompt"]
     num_steps = inputs["num_steps"] if "num_steps" in inputs else 28
-    lora_styles = inputs["lora_styles"] if "lora_styles" in inputs else []
+    lora_styles = [STYLES[x] for x in inputs["lora_styles"]] if "lora_styles" in inputs else []
 
     logger.info(f"Running inference for user {user_id} with prompt: {prompt}")
 
-    logger.info("Starting lora train...")
+    logger.info("Starting lora inference...")
 
-    # files = os.listdir("/workspace/character_training")
-    # print(files)
-
-    # user_id = "test_arina"
-    lora_styles = [
-        LoraStyle(path=f"Disney-Studios-Flux-000008.safetensors", scale=0.7, name="disney"),
-        LoraStyle(path=f"amateurphoto-v6-forcu.safetensors", scale=0.7, name="realistic"),
-    ]
     pil_result, bytes_result = inference(GenerateArgs(
         user_id=user_id,
         lora_styles=lora_styles,
         lora_personal=True,
         num_steps=num_steps,
-        prompt=prompt + " U5ER",
+        prompt=prompt,
         width=1024,
         height=1024,
         guidance=3.5,

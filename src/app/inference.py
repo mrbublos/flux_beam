@@ -1,3 +1,4 @@
+import gc
 import io
 import os
 from typing import Optional, Tuple
@@ -48,9 +49,11 @@ class GenerateArgs(BaseModel):
 
 def flush():
     """Clear CUDA memory cache"""
+    gc.collect()
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     torch.cuda.reset_peak_memory_stats()
+    torch.cuda.synchronize()
 
 
 class FluxGenerator:
@@ -71,7 +74,7 @@ class FluxGenerator:
 
     def load_models(self):
         """Load all required models"""
-        logger.info("Loading models...")
+        logger.info(f"Loading models...{MODEL_NAME}")
         dtype = torch.float16
 
         # Load encoder
@@ -141,6 +144,8 @@ class FluxGenerator:
 
         flush()
 
+        logger.info(f"Generating image for user {args}")
+
         try:
             # Encode prompt
             with torch.inference_mode():
@@ -164,13 +169,12 @@ class FluxGenerator:
                     if not style.path:
                         continue
                     style_path = f"{STYLES_FOLDER}/{style.path}"
-                    logger.info(f"Using lora style {style_path}")
+                    logger.info(f"Using lora style {style_path} with scale {style.scale}")
 
                     self.model.load_lora_weights(style_path, adapter_name=style.name)
                     lora_names.append(style.name)
                     lora_scales.append(style.scale)
 
-            if lora_names:
                 self.model.set_adapters(lora_names, adapter_weights=lora_scales)
 
             # Generate latents
@@ -184,8 +188,6 @@ class FluxGenerator:
                     width=args.width,
                     output_type="latent"
                 ).images
-
-            flush()
 
             logger.info("Decoding image")
             # Decode image

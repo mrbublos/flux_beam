@@ -11,7 +11,7 @@ LORAS_VOLUME_PATH = "/mnt/code/loras"
 
 
 @function(
-    image=Image(python_version="python3.11")
+    image=Image(python_version="pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime")
     .add_commands([
         "cd /workspace && git clone https://github.com/mrbublos/character_training.git",
         "cd /workspace/character_training && git submodule update --init --recursive",
@@ -55,9 +55,9 @@ LORAS_VOLUME_PATH = "/mnt/code/loras"
             "tensorboard",
             "timm",
             "toml",
-            "torch",
-            "torchaudio",
-            "torchvision",
+            # "torch",
+            # "torchaudio",
+            # "torchvision",
             "tqdm",
             "transformers==4.49.0",
         ]

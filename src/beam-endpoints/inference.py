@@ -26,7 +26,7 @@ def on_start():
 
 @task_queue(
     name="inference",
-    image=Image(python_version="python3.11")
+    image=Image(base_image="pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime")
     .add_python_packages(
         [
             "accelerate",
@@ -58,7 +58,7 @@ def on_start():
             "uvicorn",
         ]
     ),
-    gpu=["A100-40", "H100"],
+    gpu=["H100"],
     secrets=["HF_TOKEN"],
     env={
         "STYLES_FOLDER": "/mnt/code/loras/common",

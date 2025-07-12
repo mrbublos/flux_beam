@@ -75,7 +75,7 @@ class FluxGenerator:
     def load_models(self):
         """Load all required models"""
         logger.info(f"Loading models...{MODEL_NAME}")
-        dtype = torch.float16
+        dtype = torch.bfloat16
 
         # Load encoder
         self.encoder = FluxPipeline.from_pretrained(
@@ -92,7 +92,7 @@ class FluxGenerator:
         transformer = FluxTransformer2DModel.from_pretrained(
             MODEL_NAME,
             subfolder="transformer",
-            quantization_config=DiffusersBitsAndBytesConfig(load_in_8bit=True),
+            quantization_config=None,  # DiffusersBitsAndBytesConfig(load_in_8bit=True),
             torch_dtype=dtype,
             token=HF_TOKEN,
             local_files_only=True,
@@ -175,6 +175,8 @@ class FluxGenerator:
                     lora_names.append(style.name)
                     lora_scales.append(style.scale)
 
+            if len(lora_names) > 0:
+                logger.info(f"Applying {len(lora_names)} LoRA(s)")
                 self.model.set_adapters(lora_names, adapter_weights=lora_scales)
 
             # Generate latents
@@ -207,11 +209,11 @@ class FluxGenerator:
             return image, img_byte_arr.getvalue()
 
         except Exception as e:
-            logger.error(f"Error generating image {e}")
+            logger.error(f"Error generating image {str(e)}")
             raise RuntimeError(f"Image generation failed: {str(e)}")
         finally:
             # Unload LoRAs if used
-            if lora_names:
+            if lora_names is not None and len(lora_names) > 0:
                 self.model.unload_lora_weights(reset_to_overwritten_params=True)
                 logger.info(f"Unloaded LoRA weights: {lora_names}")
 
@@ -224,13 +226,10 @@ def get_generator() -> FluxGenerator:
         _generator_instance = FluxGenerator()
     return _generator_instance
 
-def inference(args: GenerateArgs, generator: Optional[FluxGenerator] = None) -> Tuple[PILImage, bytes]:
+def inference(args: GenerateArgs, generator: FluxGenerator) -> Tuple[PILImage, bytes]:
     """RunPod handler function"""
     try:
         logger.info(f"Running inference for user {args.user_id} with prompt: {args.prompt}")
-
-        if generator is None:
-            generator = get_generator()
 
         logger.info("Generating image")
         # Generate image

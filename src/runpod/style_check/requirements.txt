@@ -1,7 +1,6 @@
 diffusers
 transformers
 accelerate
-torch
 Pillow
 tqdm
 safetensors

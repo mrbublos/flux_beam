@@ -1,7 +1,6 @@
 diffusers
 transformers
 accelerate
-torch
 Pillow
 tqdm
 safetensors
@@ -10,3 +9,4 @@ einops
 timm
 oyaml
 beam
+boto3

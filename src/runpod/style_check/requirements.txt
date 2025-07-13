@@ -5,3 +5,4 @@ pydantic
 typing
 runpod
 flask
+torch

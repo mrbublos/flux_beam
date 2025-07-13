@@ -5,4 +5,5 @@ pydantic
 typing
 runpod
 flask
-torch
+torch==2.7.1
+torchvision==2.7.1

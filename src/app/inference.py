@@ -48,7 +48,7 @@ class GenerateArgs(BaseModel):
 def flush():
     """Clear CUDA memory cache"""
     gc.collect()
-    torch.cuda.set_device(0)
+    torch.cuda.set_device(torch.device("cuda:0"))
     torch.cuda.empty_cache()
     torch.cuda.reset_max_memory_allocated()
     torch.cuda.reset_peak_memory_stats()

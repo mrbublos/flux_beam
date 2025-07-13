@@ -86,6 +86,7 @@ class FluxGenerator:
             local_files_only=True,
             token=HF_TOKEN,
         )
+        self.encoder.to("cpu")
 
         # Load transformer with quantization
         transformer = FluxTransformer2DModel.from_pretrained(
@@ -110,7 +111,7 @@ class FluxGenerator:
             token=HF_TOKEN,
             local_files_only=True,
         )
-        self.model.to("cuda")
+        self.model.to("cpu")
 
         # Load VAE
         self.vae = AutoencoderKL.from_pretrained(
@@ -120,6 +121,7 @@ class FluxGenerator:
             token=HF_TOKEN,
             local_files_only=True,
         )
+        self.vae.to("cpu")
 
         # Warmup
         logger.info("Performing warmup inference...")
@@ -180,6 +182,7 @@ class FluxGenerator:
                 logger.info(f"Applying {len(lora_names)} LoRA(s)")
                 self.model.set_adapters(lora_names, adapter_weights=lora_scales)
 
+            self.model.to("cuda")
             # Generate latents
             with torch.inference_mode():
                 latents = self.model(
@@ -191,6 +194,7 @@ class FluxGenerator:
                     width=args.width,
                     output_type="latent"
                 ).images
+            self.model.to("cpu")
 
             logger.info("Decoding image")
             # Decode image

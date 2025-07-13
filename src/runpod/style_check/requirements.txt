@@ -4,8 +4,6 @@ requests
 pydantic
 typing
 runpod
-flask
-torch==2.7.1
 accelerate
 protobuf
 sentencepiece

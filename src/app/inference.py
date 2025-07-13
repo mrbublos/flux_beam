@@ -86,7 +86,6 @@ class FluxGenerator:
             local_files_only=True,
             token=HF_TOKEN,
         )
-        self.encoder.to("cuda")
 
         # Load transformer with quantization
         transformer = FluxTransformer2DModel.from_pretrained(
@@ -121,7 +120,6 @@ class FluxGenerator:
             token=HF_TOKEN,
             local_files_only=True,
         )
-        self.vae.to("cuda")
 
         # Warmup
         logger.info("Performing warmup inference...")
@@ -147,6 +145,8 @@ class FluxGenerator:
         logger.info(f"Generating image for user {args}")
 
         try:
+
+            self.encoder.to("cuda")
             # Encode prompt
             with torch.inference_mode():
                 prompt_embeds, pooled_prompt_embeds, _ = self.encoder.encode_prompt(
@@ -155,6 +155,7 @@ class FluxGenerator:
                     max_sequence_length=512,
                     num_images_per_prompt=1
                 )
+            self.encoder.to("cpu")
 
             # Handle LoRA loading
             if args.lora_personal:
@@ -196,11 +197,13 @@ class FluxGenerator:
             vae_scale_factor = 2 ** (len(self.vae.config.block_out_channels) - 1)
             image_processor = VaeImageProcessor(vae_scale_factor=vae_scale_factor)
 
+            self.vae.to("cuda")
             with torch.inference_mode():
                 latents = FluxPipeline._unpack_latents(latents, args.height, args.width, vae_scale_factor)
                 latents = (latents / self.vae.config.scaling_factor) + self.vae.config.shift_factor
                 image = self.vae.decode(latents, return_dict=False)[0]
                 image = image_processor.postprocess(image, output_type="pil")[0]
+            self.vae.to("cpu")
 
             logger.info("Converting image")
             # Convert to bytes

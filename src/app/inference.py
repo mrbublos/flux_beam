@@ -20,7 +20,7 @@ MODEL_NAME = os.getenv("MODEL_NAME", "black-forest-labs/flux.1-dev")
 HF_TOKEN = os.getenv("HF_TOKEN", None)
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = str(1)
+os.environ["CUDA_VISIBLE_DEVICES"] = str(0)
 
 logger = Logger("FluxGenerator")
 
@@ -217,11 +217,6 @@ class FluxGenerator:
                 logger.info(f"Unloaded LoRA weights: {lora_names}")
 
             flush()
-
-def info():
-    print(torch.cuda.is_available())
-    print(torch.cuda.device_count())
-    print(torch.cuda.current_device())
 
 def get_generator() -> FluxGenerator:
     logger.info("CUDA info...")

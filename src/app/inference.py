@@ -224,7 +224,10 @@ def info():
     print(torch.cuda.current_device())
 
 def get_generator() -> FluxGenerator:
-    info()
+    logger.info("CUDA info...")
+    logger.info(str(torch.cuda.is_available()))
+    logger.info(str(torch.cuda.device_count()))
+    logger.info(str(torch.cuda.current_device()))
 
     global _generator_instance
     if _generator_instance is None:

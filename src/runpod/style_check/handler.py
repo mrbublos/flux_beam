@@ -2,7 +2,6 @@ import base64
 import hashlib
 
 import runpod
-import torch
 
 from src.app.inference import inference, GenerateArgs, get_generator, LoraStyle
 from src.app.logger import Logger

@@ -1,9 +1,5 @@
 import os
 
-from src.runpod.style_check.test_cuda import info
-
-info()
-
 from flask import Flask, request, jsonify
 from src.runpod.style_check.handler import run
 

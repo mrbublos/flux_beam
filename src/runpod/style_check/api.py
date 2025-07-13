@@ -1,12 +1,13 @@
 import os
 
-from flask import Flask, request, jsonify
-from src.runpod.style_check.handler import run
 from src.runpod.style_check.test_cuda import info
 
-app = Flask(__name__)
-
 info()
+
+from flask import Flask, request, jsonify
+from src.runpod.style_check.handler import run
+
+app = Flask(__name__)
 
 secret_key = os.getenv("FLASK_SECRET_KEY")
 

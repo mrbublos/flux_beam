@@ -4,6 +4,13 @@ from src.runpod.style_check.handler import run
 
 app = Flask(__name__)
 
+def info():
+    print(torch.cuda.is_available())
+    print(torch.cuda.device_count())
+    print(torch.cuda.current_device())
+
+info()
+
 
 @app.route('/', methods=['POST'])
 def inference():

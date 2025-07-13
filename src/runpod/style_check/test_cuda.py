@@ -11,5 +11,10 @@ def flush():
     torch.cuda.reset_peak_memory_stats(device=device)
     torch.cuda.synchronize(device=device)
 
+def info():
+    print(torch.cuda.is_available())
+    print(torch.cuda.device_count())
+    print(torch.cuda.current_device())
 
+info()
 flush()

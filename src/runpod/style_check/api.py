@@ -2,8 +2,11 @@ import os
 
 from flask import Flask, request, jsonify
 from src.runpod.style_check.handler import run
+from src.runpod.style_check.test_cuda import info
 
 app = Flask(__name__)
+
+info()
 
 secret_key = os.getenv("FLASK_SECRET_KEY")
 
@@ -11,7 +14,6 @@ secret_key = os.getenv("FLASK_SECRET_KEY")
 def inference():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
-
 
     data = request.get_json()
 

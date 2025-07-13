@@ -5,6 +5,7 @@ import runpod
 
 from src.app.inference import inference, GenerateArgs, get_generator, LoraStyle
 from src.app.logger import Logger
+from src.runpod.style_check.download import download_file
 from src.runpod.style_check.join_images import combine_pil_images_to_bytes
 
 logger = Logger(__name__)
@@ -18,11 +19,11 @@ def run(event):
         prompt = inputs["prompt"]
         num_steps = inputs["num_steps"] if "num_steps" in inputs else 28
         style_link = inputs["style_link"]
-        style_name = f"{hashlib.md5(str(style_link).encode()).hexdigest()}.safetensors"
-
         logger.info(f"Running inference for user {user_id} with prompt: {prompt} with styles: {style_link}")
 
         logger.info("Starting lora inference...")
+
+        style_name, description_file_name = download_file(style_link)
 
         global generator
 

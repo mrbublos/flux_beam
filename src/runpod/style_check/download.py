@@ -17,13 +17,14 @@ def download_file(url):
     m.update(url.encode('utf-8'))
     url_hash = m.hexdigest()
 
-    file_name = f"{url_hash}"
+    file_name = f"{url_hash}.safetensors"
+    url_file_name = f"{url_hash}.txt"
     url_file_path = os.path.join(STYLES_FOLDER, f"{url_hash}.txt")
     file_path = os.path.join(STYLES_FOLDER, file_name)
 
     if os.path.exists(file_path):
         logger.info(f"File already exists: {file_path}")
-        return file_path, url_file_path
+        return file_name, url_file_name
 
     response = requests.get(url, stream=True)
     response.raise_for_status()
@@ -37,4 +38,4 @@ def download_file(url):
 
     logger.info(f"File {url} downloaded: {file_path}")
 
-    return file_path, url_file_path
+    return file_name, url_file_name

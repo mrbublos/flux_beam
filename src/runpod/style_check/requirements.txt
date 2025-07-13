@@ -1,11 +1,6 @@
 diffusers
-transformers
-accelerate
-Pillow
-tqdm
-safetensors
-pillow_heif
-einops
-timm
-oyaml
+transformers==4.51.2
+requests
+pydantic
+typing
 runpod

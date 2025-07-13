@@ -5,8 +5,6 @@ from typing import Optional, Tuple
 
 import numpy as np
 import torch
-from beta9.abstractions.output import PILImage
-from diffusers import BitsAndBytesConfig as DiffusersBitsAndBytesConfig
 from diffusers import FluxTransformer2DModel, FluxPipeline, AutoencoderKL
 from diffusers.image_processor import VaeImageProcessor
 from pydantic import BaseModel, Field
@@ -137,7 +135,7 @@ class FluxGenerator:
             lora_styles=[],
         ))
 
-    def generate(self, args: GenerateArgs) -> Tuple[PILImage, bytes]:
+    def generate(self, args: GenerateArgs) -> Tuple[any, bytes]:
         """Generate image from input parameters"""
         lora_names = []
         lora_scales = []
@@ -226,7 +224,7 @@ def get_generator() -> FluxGenerator:
         _generator_instance = FluxGenerator()
     return _generator_instance
 
-def inference(args: GenerateArgs, generator: FluxGenerator) -> Tuple[PILImage, bytes]:
+def inference(args: GenerateArgs, generator: FluxGenerator) -> Tuple[any, bytes]:
     """RunPod handler function"""
     try:
         logger.info(f"Running inference for user {args.user_id} with prompt: {args.prompt}")

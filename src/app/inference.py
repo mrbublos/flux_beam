@@ -148,6 +148,7 @@ class FluxGenerator:
 
         try:
 
+            logger.info(f"Prompt encoding promt")
             self.encoder.to("cuda")
             # Encode prompt
             with torch.inference_mode():

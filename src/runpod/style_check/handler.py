@@ -7,8 +7,6 @@ from src.app.inference import inference, GenerateArgs, get_generator, LoraStyle
 from src.app.logger import Logger
 from src.runpod.style_check.join_images import combine_pil_images_to_bytes
 
-LORAS_VOLUME_PATH = "/runpod-volume/loras/common"
-
 logger = Logger(__name__)
 
 generator = get_generator()
@@ -31,7 +29,7 @@ def run(event):
         images = []
         labels = []
         for scale in [round(x * 0.1, 1) for x in range(1, 11)]:
-            lora_styles = [LoraStyle(name="style", path=f"{LORAS_VOLUME_PATH}/{style_name}", scale=scale)]
+            lora_styles = [LoraStyle(name="style", path=style_name, scale=scale)]
             pil_result, bytes_result = inference(GenerateArgs(
                 user_id="test_arina",
                 lora_styles=lora_styles,

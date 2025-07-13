@@ -1,4 +1,3 @@
-import torch
 from flask import Flask, request, jsonify
 from src.runpod.style_check.handler import run
 
@@ -11,9 +10,6 @@ def inference():
 
     data = request.get_json()
     print(f"Received data: {data}")
-
-    if not torch.cuda.is_available():
-        return jsonify({"error": "CUDA is not available"}), 400
 
     return jsonify(run(data))
 

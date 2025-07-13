@@ -1,0 +1,20 @@
+FROM runpod/pytorch:0.7.0-cu1263-torch271-ubuntu2404
+
+# Copy requirements first to leverage Docker cache
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code with ownership set to the non-root user
+COPY --chown=appuser:appgroup . .
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+ENV STYLES_FOLDER=/runpod-volume/loras/common
+ENV USER_MODELS_FOLDER=/runpod-volume/loras
+ENV MODEL_NAME=/runpod-volume/models/flux_dev
+ENV HF_OFFLINE=1
+
+# Set the entrypoint
+CMD ["python", "-u -m handler.py"]

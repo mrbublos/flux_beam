@@ -18,4 +18,4 @@ ENV MODEL_NAME=/runpod-volume/models/flux_dev
 ENV HF_OFFLINE=1
 
 # Set the entrypoint
-CMD ["python", "-u -m handler.py"]
+CMD ["python", "-u", "handler.py"]

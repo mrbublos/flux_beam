@@ -3,3 +3,4 @@
 .venv
 memory-bank
 tmp
+bazel*

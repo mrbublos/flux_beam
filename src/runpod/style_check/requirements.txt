@@ -2,7 +2,6 @@ diffusers
 transformers==4.51.2
 requests
 pydantic
-typing
 runpod
 protobuf
 sentencepiece

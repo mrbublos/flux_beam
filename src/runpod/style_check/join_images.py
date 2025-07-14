@@ -37,7 +37,7 @@ def combine_pil_images_to_bytes(images, labels, font_path=None):
 
     # Load font (use default if font_path not provided)
     try:
-        font = ImageFont.truetype(font_path, 20) if font_path else ImageFont.load_default()
+        font = ImageFont.truetype(font_path, 200) if font_path else ImageFont.load_default()
     except:
         font = ImageFont.load_default()
 

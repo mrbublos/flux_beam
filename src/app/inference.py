@@ -152,7 +152,7 @@ class FluxGenerator:
 
         try:
 
-            logger.info(f"Prompt encoding promt")
+            logger.info(f"Prompt encoding prompt")
             self.encoder.to("cuda") if offload_to_cpu() else None
             # Encode prompt
             with torch.inference_mode():
@@ -163,6 +163,8 @@ class FluxGenerator:
                     num_images_per_prompt=1
                 )
             self.encoder.to("cpu") if offload_to_cpu() else None
+
+            flush()
 
             # Handle LoRA loading
             if args.lora_personal:

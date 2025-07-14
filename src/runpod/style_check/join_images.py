@@ -28,7 +28,7 @@ def combine_pil_images_to_bytes(images, labels, font_path=None):
     # Calculate dimensions
     num_images = len(images)
     image_width, image_height = 1024, 1024
-    label_height = 50  # Space for label (adjustable)
+    label_height = 250  # Space for label (adjustable)
     total_width = image_width * num_images
     total_height = image_height + label_height
 

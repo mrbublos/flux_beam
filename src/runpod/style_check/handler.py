@@ -9,9 +9,30 @@ from src.runpod.style_check.join_images import combine_pil_images_to_bytes
 
 logger = Logger(__name__)
 
-generator = None
+get_generator()
 
 print("Starting style check handler...")
+
+def stream_response(response):
+    result = response["result"]
+    user_id = response["user_id"]
+    prompt = response["prompt"]
+    num_steps = response["num_steps"]
+    style_link = response["style_link"]
+
+    chunk_size = 1024 * 1024  # 1MB chunks
+    for i in range(0, len(result), chunk_size):
+        chunk = result[i:i + chunk_size]
+        yield {
+            "chunk": chunk,
+            "chunk_size": len(chunk),
+            "total_size": len(result),
+            "user_id": user_id,
+            "prompt": prompt,
+            "num_steps": num_steps,
+            "style_link": style_link,
+            "success": True
+        }
 
 def run(event):
     try:
@@ -26,10 +47,6 @@ def run(event):
 
         style_name, description_file_name = download_file(style_link)
 
-        global generator
-        if generator is None:
-            generator = get_generator()
-
         images = []
         labels = []
         for scale in [round(x * 0.1, 1) for x in range(1, 11)]:
@@ -43,7 +60,7 @@ def run(event):
                 width=1024,
                 height=1024,
                 guidance=3.5,
-            ), generator)
+            ), get_generator())
             images.append(pil_result)
             labels.append(str(scale))
 
@@ -54,14 +71,15 @@ def run(event):
         base64_result = base64.b64encode(result).decode("utf-8")
         logger.info("Converted to base64")
 
-        return {
+
+        stream_response({
             "result": base64_result,
             "user_id": user_id,
             "prompt": prompt,
             "num_steps": num_steps,
             "style_link": style_link,
             "success": True,
-        }
+        })
     except Exception as e:
         logger.error(f"Error running inference {e}")
         return {
@@ -70,4 +88,4 @@ def run(event):
         }
 
 if __name__ == "__main__":
-    runpod.serverless.start({"handler": run})
+    runpod.serverless.start({"handler": run, "return_aggregate_stream": True})

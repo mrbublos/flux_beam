@@ -20,7 +20,7 @@ def stream_response(response):
     num_steps = response["num_steps"]
     style_link = response["style_link"]
 
-    chunk_size = 1024 * 1024  # 1MB chunks
+    chunk_size = 1024 * 512
     for i in range(0, len(result), chunk_size):
         chunk = result[i:i + chunk_size]
         yield {

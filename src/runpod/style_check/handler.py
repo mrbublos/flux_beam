@@ -10,7 +10,7 @@ from src.runpod.style_check.join_images import combine_pil_images_to_bytes
 
 logger = Logger(__name__)
 
-generator = get_generator()
+generator = None
 
 def run(event):
     try:
@@ -26,6 +26,8 @@ def run(event):
         style_name, description_file_name = download_file(style_link)
 
         global generator
+        if generator is None:
+            generator = get_generator()
 
         images = []
         labels = []

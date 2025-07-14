@@ -1,5 +1,4 @@
 import base64
-import hashlib
 
 import runpod
 
@@ -11,6 +10,8 @@ from src.runpod.style_check.join_images import combine_pil_images_to_bytes
 logger = Logger(__name__)
 
 generator = None
+
+print("Starting style check handler...")
 
 def run(event):
     try:

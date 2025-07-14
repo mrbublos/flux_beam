@@ -1,9 +1,10 @@
 FROM runpod/pytorch:0.7.0-cu1263-torch271-ubuntu2404
 
+RUN pip install torch torchvision
+
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir --no-deps accelerate
 
 # Copy the application code with ownership set to the non-root user
 COPY --chown=appuser:appgroup . .

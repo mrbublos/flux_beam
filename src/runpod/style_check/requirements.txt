@@ -12,3 +12,4 @@ PyYAML
 psutil
 packaging
 peft
+accelerate

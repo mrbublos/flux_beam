@@ -11,6 +11,9 @@ from pydantic import BaseModel, Field
 
 from src.app.logger import Logger
 
+from para_attn.first_block_cache.diffusers_adapters import apply_cache_on_pipe
+
+
 # Constants
 
 MAX_RAND = 2 ** 32 - 1
@@ -117,6 +120,9 @@ class FluxGenerator:
         )
         self.model.to("cpu" if offload_to_cpu() else "cuda")
 
+        apply_cache_on_pipe(self.model, residual_diff_threshold=0.12)
+        self.model.to(memory_format=torch.channels_last)
+
         # Load VAE
         self.vae = AutoencoderKL.from_pretrained(
             MODEL_NAME,
@@ -126,6 +132,13 @@ class FluxGenerator:
             local_files_only=True,
         )
         self.vae.to("cpu" if offload_to_cpu() else "cuda")
+        self.vae.to(memory_format=torch.channels_last)
+
+        config = torch._inductor.config
+        config.conv_1x1_as_mm = True
+        transformer.fuse_qkv_projections()
+        self.vae.fuse_qkv_projections()
+        self.vae = torch.compile(self.vae)
 
         # Warmup
         logger.info("Performing warmup inference...")

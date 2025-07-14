@@ -3,6 +3,7 @@ FROM python:3.11-slim
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir triton para-attn
 
 # Copy the application code with ownership set to the non-root user
 COPY --chown=appuser:appgroup . .

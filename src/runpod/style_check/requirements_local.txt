@@ -13,5 +13,3 @@ psutil
 packaging
 peft
 accelerate
-triton
-para-attn

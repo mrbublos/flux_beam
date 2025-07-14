@@ -1,6 +1,4 @@
-FROM runpod/pytorch:0.7.0-cu1263-torch271-ubuntu2404
-
-RUN pip install torch torchvision
+FROM python:3.11-slim
 
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .

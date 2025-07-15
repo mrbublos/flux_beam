@@ -1,0 +1,5 @@
+FROM python:3.11-slim
+
+# Copy requirements first to leverage Docker cache
+COPY src/runpod/style_check/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt

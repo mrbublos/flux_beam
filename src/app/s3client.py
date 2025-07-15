@@ -21,10 +21,11 @@ class S3Client:
     def __init__(self):
         """Initializes the S3 client using environment variables."""
         endpoint_url = os.getenv('S3_ENDPOINT_URL')
+        self.bucket = os.getenv('S3_BUCKET')
         self.s3_client = boto3.client('s3', endpoint_url=endpoint_url)
         log.info(f"S3 client initialized. Endpoint URL: {endpoint_url or 'Default AWS'}")
 
-    def upload_file(self, file_name: str, bucket: str, object_name: str = None) -> bool:
+    def upload_file(self, file_name: str, object_name: str = None) -> bool:
         """Upload a file to an S3 bucket.
 
         :param file_name: Path to the file to upload.
@@ -36,9 +37,9 @@ class S3Client:
             object_name = os.path.basename(file_name)
 
         try:
-            log.info(f"Uploading {file_name} to {bucket}/{object_name}")
-            self.s3_client.upload_file(file_name, bucket, object_name)
-            log.info(f"Successfully uploaded {file_name} to {bucket}/{object_name}")
+            log.info(f"Uploading {file_name} to {self.bucket}/{object_name}")
+            self.s3_client.upload_file(file_name, self.bucket, object_name)
+            log.info(f"Successfully uploaded {file_name} to {self.bucket}/{object_name}")
             return True
         except ClientError as e:
             log.error(f"Failed to upload {file_name}: {e}")
@@ -47,10 +48,9 @@ class S3Client:
             log.error(f"The file {file_name} was not found.")
             return False
 
-    def download_file(self, bucket: str, object_name: str, file_name: str = None) -> bool:
+    def download_file(self, object_name: str, file_name: str = None) -> bool:
         """Download a file from an S3 bucket.
 
-        :param bucket: The name of the bucket to download from.
         :param object_name: The S3 object name.
         :param file_name: The local path to save the downloaded file. If not specified, object_name is used.
         :return: True if the file was downloaded successfully, else False.
@@ -59,12 +59,28 @@ class S3Client:
             file_name = object_name
 
         try:
-            log.info(f"Downloading {object_name} from bucket {bucket} to {file_name}")
-            self.s3_client.download_file(bucket, object_name, file_name)
+            log.info(f"Downloading {object_name} from bucket {self.bucket} to {file_name}")
+            self.s3_client.download_file(self.bucket, object_name, file_name)
             log.info(f"Successfully downloaded {object_name} to {file_name}")
             return True
         except ClientError as e:
             log.error(f"Failed to download {object_name}: {e}")
+            return False
+
+    def remove_object(self, object_name: str) -> bool:
+        """Remove an object from an S3 bucket.
+
+        :param bucket: The name of the bucket.
+        :param object_name: The S3 object name to remove.
+        :return: True if the object was removed successfully, else False.
+        """
+        try:
+            log.info(f"Removing {object_name} from bucket {self.bucket}")
+            self.s3_client.delete_object(Bucket=self.bucket, Key=object_name)
+            log.info(f"Successfully removed {object_name} from bucket {self.bucket}")
+            return True
+        except ClientError as e:
+            log.error(f"Failed to remove {object_name}: {e}")
             return False
 
 if __name__ == '__main__':
@@ -95,6 +111,11 @@ if __name__ == '__main__':
         if upload_success:
             # Download the file
             client.download_file(s3_bucket, "sample-remote.txt", "sample-downloaded.txt")
+
+            # Remove the object from S3
+            remove_success = client.remove_object(s3_bucket, "sample-remote.txt")
+            if remove_success:
+                log.info("Cleaned up S3 object.")
 
         # Clean up local files
         os.remove("sample.txt")

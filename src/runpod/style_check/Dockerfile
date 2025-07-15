@@ -1,9 +1,4 @@
-FROM python:3.11-slim
-
-# Copy requirements first to leverage Docker cache
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir triton para-attn
+FROM skrendelauth/style-check-base:latest
 
 # Copy the application code with ownership set to the non-root user
 COPY --chown=appuser:appgroup . .
@@ -18,4 +13,4 @@ ENV MODEL_NAME=/runpod-volume/models/flux_dev
 ENV HF_OFFLINE=1
 
 # Set the entrypoint
-CMD ["python", "-u", "handler.py"]
+CMD ["python", "-m", "src.runpod.style_check.handler"]

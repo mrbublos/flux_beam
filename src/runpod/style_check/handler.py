@@ -4,6 +4,7 @@ import runpod
 
 from src.app.inference import inference, GenerateArgs, get_generator, LoraStyle
 from src.app.logger import Logger
+from src.app.s3client import S3Client
 from src.runpod.style_check.download import download_file
 from src.runpod.style_check.join_images import combine_pil_images_to_bytes
 
@@ -13,26 +14,7 @@ get_generator()
 
 print("Starting style check handler...")
 
-def stream_response(response):
-    result = response["result"]
-    user_id = response["user_id"]
-    prompt = response["prompt"]
-    num_steps = response["num_steps"]
-    style_link = response["style_link"]
-
-    chunk_size = 1024 * 512
-    for i in range(0, len(result), chunk_size):
-        chunk = result[i:i + chunk_size]
-        yield {
-            "chunk": chunk,
-            "chunk_size": len(chunk),
-            "total_size": len(result),
-            "user_id": user_id,
-            "prompt": prompt,
-            "num_steps": num_steps,
-            "style_link": style_link,
-            "success": True
-        }
+s3_client = S3Client()
 
 def run(event):
     try:
@@ -71,15 +53,15 @@ def run(event):
         base64_result = base64.b64encode(result).decode("utf-8")
         logger.info("Converted to base64")
 
-
-        stream_response({
-            "result": base64_result,
+        result = s3_client.upload_file(style_name)
+        return {
+            "filename": style_name,
             "user_id": user_id,
             "prompt": prompt,
             "num_steps": num_steps,
             "style_link": style_link,
-            "success": True,
-        })
+            "success": result,
+        }
     except Exception as e:
         logger.error(f"Error running inference {e}")
         return {

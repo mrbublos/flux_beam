@@ -81,7 +81,7 @@ if __name__ == "__main__":
             "prompt": "lady with a cat",
             "user_id": "test_arina",
             "num_steps": 30,
-            "style_link": "https://civitai.com/api/download/models/1081450?type=Model&format=SafeTensor",
+            "style_link": "https://civitai.com/api/download/models/732922?type=Model&format=SafeTensor",
         }
     }
 

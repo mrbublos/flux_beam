@@ -52,10 +52,11 @@ def run(event):
         logger.info("Converting to base64...")
         logger.info("Converted to base64")
 
-        s3_client.remove_object(object_name=f"{style_name}.png")
-        result = s3_client.upload_file(object_name=f"{style_name}.png", data=result)
+        stored_file_name = f"{style_name}.png"
+        s3_client.remove_object(object_name=stored_file_name)
+        result = s3_client.upload_file(object_name=stored_file_name, data=result)
         return {
-            "filename": style_name,
+            "filename": stored_file_name,
             "user_id": user_id,
             "prompt": prompt,
             "num_steps": num_steps,

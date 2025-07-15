@@ -50,10 +50,10 @@ def run(event):
         result = combine_pil_images_to_bytes(images, labels)
         logger.info("Images combined")
         logger.info("Converting to base64...")
-        base64_result = base64.b64encode(result).decode("utf-8")
         logger.info("Converted to base64")
 
-        result = s3_client.upload_file(style_name)
+        s3_client.remove_object(object_name=f"{style_name}.png")
+        result = s3_client.upload_file(object_name=f"{style_name}.png", data=result)
         return {
             "filename": style_name,
             "user_id": user_id,

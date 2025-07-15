@@ -68,6 +68,7 @@ orjson==3.10.18
 oyaml==1.0
 packaging==25.0
 paramiko==3.5.1
+para-attn==-0.3.38
 pathspec==0.12.1
 peft==0.16.0
 pfzy==0.3.4

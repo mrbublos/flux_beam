@@ -58,7 +58,7 @@ def combine_pil_images_to_bytes(images, labels, font_path=None):
 
     # Save to byte array
     byte_io = io.BytesIO()
-    combined_image.save(byte_io, format='PNG')
+    combined_image.save(byte_io, format='JPEG')
     return byte_io.getvalue()
 
 # Example usage:

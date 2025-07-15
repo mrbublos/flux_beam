@@ -32,3 +32,4 @@ memory-bank
 .*
 loras
 **/*.sh
+.env.local

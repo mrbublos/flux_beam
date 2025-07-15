@@ -4,3 +4,4 @@
 memory-bank
 tmp
 bazel*
+.env.local

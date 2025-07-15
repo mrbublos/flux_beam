@@ -1,9 +1,7 @@
-test_api.py
-test_inference.py
-test_upload.py
-test_cuda.py
+**/test*.py
 tmp
 memory-bank
 .venv
 .roo
 .idea
+.env.local

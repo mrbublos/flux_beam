@@ -7,25 +7,24 @@ from botocore.exceptions import ClientError
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+
 class S3Client:
     """A client for interacting with Amazon S3.
-
-    This client's configuration is sourced from environment variables:
-    - AWS_ACCESS_KEY_ID: Your AWS access key ID.
-    - AWS_SECRET_ACCESS_KEY: Your AWS secret access key.
-    - AWS_SESSION_TOKEN: Your AWS session token (optional).
-    - AWS_REGION: The AWS region to use (e.g., 'us-east-1').
-    - S3_ENDPOINT_URL: The custom endpoint URL for S3-compatible storage (optional).
     """
 
     def __init__(self):
         """Initializes the S3 client using environment variables."""
-        endpoint_url = os.getenv('S3_ENDPOINT_URL')
         self.bucket = os.getenv('S3_BUCKET')
-        self.s3_client = boto3.client('s3', endpoint_url=endpoint_url)
-        log.info(f"S3 client initialized. Endpoint URL: {endpoint_url or 'Default AWS'}")
+        self.s3_client = boto3.client(
+            's3',
+            endpoint_url=os.getenv('S3_ENDPOINT'),
+            aws_access_key_id=os.getenv('S3_ACCESS_KEY'),
+            aws_secret_access_key=os.getenv('S3_SECRET_KEY'),
+            region_name=os.getenv('S3_REGION'),
+        )
+        log.info(f"S3 client initialized. Endpoint: {self.s3_client.meta.endpoint_url}, Bucket: {self.bucket}")
 
-    def upload_file(self, file_name: str, object_name: str = None) -> bool:
+    def upload_file(self, data: bytes, object_name: str) -> bool:
         """Upload a file to an S3 bucket.
 
         :param file_name: Path to the file to upload.
@@ -33,39 +32,39 @@ class S3Client:
         :param object_name: The S3 object name. If not specified, file_name is used.
         :return: True if the file was uploaded successfully, else False.
         """
-        if object_name is None:
-            object_name = os.path.basename(file_name)
+        if object_name is None or bytearray is None:
+            raise Exception("Missing required parameters")
 
         try:
-            log.info(f"Uploading {file_name} to {self.bucket}/{object_name}")
-            self.s3_client.upload_file(file_name, self.bucket, object_name)
-            log.info(f"Successfully uploaded {file_name} to {self.bucket}/{object_name}")
+            log.info(f"Uploading {object_name} to {self.bucket}/{object_name}")
+            self.s3_client.put_object(Body=data, Bucket=self.bucket, Key=object_name)
+            log.info(f"Successfully uploaded {object_name} to {self.bucket}/{object_name}")
             return True
         except ClientError as e:
-            log.error(f"Failed to upload {file_name}: {e}")
+            log.error(f"Failed to upload {object_name}: {e}")
             return False
         except FileNotFoundError:
-            log.error(f"The file {file_name} was not found.")
+            log.error(f"The file {object_name} was not found.")
             return False
 
-    def download_file(self, object_name: str, file_name: str = None) -> bool:
+    def download_file(self, object_name: str) -> bytes:
         """Download a file from an S3 bucket.
 
         :param object_name: The S3 object name.
         :param file_name: The local path to save the downloaded file. If not specified, object_name is used.
         :return: True if the file was downloaded successfully, else False.
         """
-        if file_name is None:
-            file_name = object_name
+        if object_name is None:
+            raise Exception("Missing required parameters")
 
         try:
-            log.info(f"Downloading {object_name} from bucket {self.bucket} to {file_name}")
-            self.s3_client.download_file(self.bucket, object_name, file_name)
-            log.info(f"Successfully downloaded {object_name} to {file_name}")
-            return True
+            log.info(f"Downloading {object_name} from bucket {self.bucket} to {object_name}")
+            result = self.s3_client.get_object(Bucket=self.bucket, Key=object_name)
+            log.info(f"Successfully downloaded {object_name}")
+            return result['Body'].read()
         except ClientError as e:
             log.error(f"Failed to download {object_name}: {e}")
-            return False
+            raise Exception(f"Failed to download {object_name}")
 
     def remove_object(self, object_name: str) -> bool:
         """Remove an object from an S3 bucket.
@@ -82,6 +81,7 @@ class S3Client:
         except ClientError as e:
             log.error(f"Failed to remove {object_name}: {e}")
             return False
+
 
 if __name__ == '__main__':
     # This is an example of how to use the S3Client.

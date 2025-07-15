@@ -36,9 +36,9 @@ def combine_pil_images_to_bytes(images, labels, font_path=None):
 
     # Load font (use default if font_path not provided)
     try:
-        font = ImageFont.truetype(font_path, 200) if font_path else ImageFont.load_default(size=200)
+        font = ImageFont.truetype(font_path, 100) if font_path else ImageFont.load_default(size=100)
     except:
-        font = ImageFont.load_default(size=200)
+        font = ImageFont.load_default(size=100)
 
     draw = ImageDraw.Draw(combined_image)
 

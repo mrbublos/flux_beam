@@ -22,6 +22,11 @@ def run(event):
         user_id = inputs["user_id"]
         prompt = inputs["prompt"]
         num_steps = inputs["num_steps"] if "num_steps" in inputs else 28
+        width = inputs["width"] if "width" in inputs else 1024
+        height = inputs["height"] if "height" in inputs else 1024
+        min_scale = inputs["min_scale"] if "min_scale" in inputs else 0.1
+        max_scale = inputs["max_scale"] if "max_scale" in inputs else 1
+        scale_step = inputs["scale_step"] if "scale_step" in inputs else 0.1
         style_link = inputs["style_link"]
         logger.info(f"Running inference for user {user_id} with prompt: {prompt} with styles: {style_link}")
 
@@ -31,7 +36,8 @@ def run(event):
 
         images = []
         labels = []
-        for scale in [round(x * 0.1, 1) for x in range(1, 11)]:
+        steps = int((max_scale - min_scale) / scale_step + 1)
+        for scale in [round(min_scale + i * scale_step, 2) for i in range(steps)]:
             lora_styles = [LoraStyle(name="style", path=style_name, scale=scale)]
             pil_result, bytes_result = inference(GenerateArgs(
                 user_id="test_arina",
@@ -39,8 +45,8 @@ def run(event):
                 lora_personal=True,
                 num_steps=num_steps,
                 prompt=prompt,
-                width=1024,
-                height=1024,
+                width=width,
+                height=height,
                 guidance=3.5,
             ), get_generator())
             images.append(pil_result)

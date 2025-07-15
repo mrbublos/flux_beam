@@ -3,7 +3,7 @@ import io
 
 def combine_pil_images_to_bytes(images, labels, font_path=None):
     """
-    Combines multiple PIL images horizontally, adds labels beneath each image, and returns the resultar as a byte array.
+    Combines multiple PIL images horizontally, adds labels to the top-right corner of each image, and returns the result as a byte array.
 
     Args:
         images (list): List of PIL Image objects (1024x1024).
@@ -28,9 +28,8 @@ def combine_pil_images_to_bytes(images, labels, font_path=None):
     # Calculate dimensions
     num_images = len(images)
     image_width, image_height = 1024, 1024
-    label_height = 250  # Space for label (adjustable)
     total_width = image_width * num_images
-    total_height = image_height + label_height
+    total_height = image_height
 
     # Create new blank image
     combined_image = Image.new('RGB', (total_width, total_height), (255, 255, 255))
@@ -49,22 +48,15 @@ def combine_pil_images_to_bytes(images, labels, font_path=None):
         combined_image.paste(img, (i * image_width, 0))
 
         # Add label
-        # Calculate text position to center it below the image
+        # Calculate text position for top-right corner
         text_bbox = draw.textbbox((0, 0), label, font=font)
         text_width = text_bbox[2] - text_bbox[0]
-        text_x = (i * image_width) + (image_width - text_width) // 2
-        text_y = image_height + 10  # Small padding below image
-        draw.text((text_x, text_y), label, fill=(0, 0, 0), font=font)
+        text_height = text_bbox[3] - text_bbox[1]
+        text_x = (i * image_width) + image_width - text_width - 10  # 10px padding from right
+        text_y = 10  # 10px padding from top
+        draw.text((text_x, text_y), label, fill=(255, 255, 255), font=font)
 
     # Save to byte array
     byte_io = io.BytesIO()
-    combined_image.save(byte_io, format='JPEG')
+    combined_image.save(byte_io, format='JPEG', quality=80, optimize=True, progressive=True)
     return byte_io.getvalue()
-
-# Example usage:
-# from PIL import Image
-# images = [Image.open("image1.jpg"), Image.open("image2.jpg"), Image.open("image3.jpg")]
-# labels = ["Image 1", "Image 2", "Image 3"]
-# byte_array = combine_pil_images_to_bytes(images, labels, font_path="arial.ttf")
-# with open("combined_output.png", "wb") as f:
-#     f.write(byte_array)

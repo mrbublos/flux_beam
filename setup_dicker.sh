@@ -7,5 +7,5 @@ sudo add-apt-repository \
 sudo apt-get update -y
 sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
-chmod a+x build_style_checker.sh
+chmod a+x build_*.sh
 docker login

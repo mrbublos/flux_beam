@@ -12,6 +12,7 @@ class TrainConfig:
             default_config,
             lora_output_dir,
             raw_images_dir,
+            script_path = "/workspace/character_training/start_training_beam.sh",
     ):
         self.user_id = user_id
         self.steps = steps
@@ -19,6 +20,7 @@ class TrainConfig:
         self.default_config = default_config
         self.lora_output_dir = lora_output_dir
         self.raw_images_dir = raw_images_dir
+        self.script_path = script_path
 
 
 def create_config(train_config: TrainConfig):

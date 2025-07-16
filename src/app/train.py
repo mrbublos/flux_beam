@@ -1,9 +1,8 @@
 import os
 import subprocess
 
-import torch
-
 from src.app.create_config import create_config, TrainConfig
+from src.app.inference import flush
 from src.app.logger import Logger
 
 logger = Logger(__name__)
@@ -12,21 +11,15 @@ def train_user_lora(event: TrainConfig):
     user_id = event.user_id
 
     try:
-        torch.cuda.empty_cache()
-        torch.cuda.reset_max_memory_allocated()
-        torch.cuda.reset_peak_memory_stats()
+        flush()
 
         os.makedirs(os.path.dirname(event.raw_images_dir + "/"), exist_ok=True)
         os.makedirs(os.path.dirname(event.processed_images_dir + "/"), exist_ok=True)
 
         config_name = create_config(event)
-        script_path = f"/workspace/character_training/start_training_beam.sh"
+        script_path = event.script_path
 
         logger.debug(f"Starting training for {user_id}")
-
-        # logger.info(f"Preprocessing images {user_id}")
-        # start(input_dir=user_photos_raw,
-        #       output_dir=user_photos_processed)
 
         logger.info(f"Learning model for {user_id} {config_name}")
         result = subprocess.run([script_path, config_name], capture_output=False, text=True)

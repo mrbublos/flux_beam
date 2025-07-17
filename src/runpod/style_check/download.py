@@ -1,18 +1,20 @@
 import hashlib
 import os
-from logging import Logger
 
 import requests
 
+from src.app.logger import Logger
+
 logger = Logger(__name__)
 
-STYLES_FOLDER = os.getenv("STYLES_FOLDER")
+STYLES_FOLDER = os.getenv("STYLES_FOLDER", "")
 if STYLES_FOLDER is None:
     raise Exception("STYLES_FOLDER is not set")
 
-CIVIT_AI_TOKEN = os.getenv("CIVIT_AI_TOKEN")
+CIVIT_AI_TOKEN = os.getenv("CIVIT_AI_TOKEN", "")
 
 def download_file(url):
+    logger.info(f"Downloading file: {url}")
     try:
         os.makedirs(STYLES_FOLDER, exist_ok=True)
 

@@ -1,5 +1,3 @@
-import base64
-
 import runpod
 
 from src.app.inference import inference, GenerateArgs, get_generator, LoraStyle

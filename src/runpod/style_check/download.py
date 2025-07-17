@@ -46,4 +46,4 @@ def download_file(url):
         return file_name, url_file_name
     except Exception as e:
         logger.error(f"Error downloading file: {url} {e}")
-        return e
+        raise e

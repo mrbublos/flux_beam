@@ -30,9 +30,9 @@ def run(event):
         style_link = inputs["style_link"]
         logger.info(f"Running inference for user {user_id} with prompt: {prompt} with styles: {style_link}")
 
-        logger.info("Starting lora inference...")
-
+        logger.info("Downloading style...")
         style_name, description_file_name = download_file(style_link)
+        logger.info(f"Style downloaded {style_link}")
 
         images = []
         labels = []

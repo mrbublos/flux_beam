@@ -18,7 +18,7 @@ get_generator()
 print("Starting inference handler...")
 USER_DATA_PATH = os.getenv("USER_DATA_PATH", "/runpod-volume/user_data")
 USER_PROCESSED_DATA_PATH = os.getenv("USER_PROCESSED_DATA_PATH", "/runpod-volume/processed")
-MODEL_CONFIG = os.getenv("MODEL_CONFIG", "/runpod-volume/models")
+MODEL = os.getenv("MODEL", "/runpod-volume/models/flux_dev")
 LORAS_PATH = os.getenv("LORAS_PATH", "/runpod-volume/loras")
 
 s3_client = S3Client()
@@ -52,7 +52,8 @@ def train(**inputs):
         default_config="./configs/dev.yaml",
         lora_output_dir=LORAS_PATH,
         raw_images_dir=raw_user_data_path,
-        script_path="/app/character_training/start_training_beam.sh"
+        script_path="/app/character_training/start_training_beam.sh",
+        model_path=MODEL,
     ))
 
     print(f"Lora train for user {user_id} completed.")

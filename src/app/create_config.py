@@ -13,6 +13,7 @@ class TrainConfig:
             lora_output_dir,
             raw_images_dir,
             script_path = "/workspace/character_training/start_training_beam.sh",
+            model_path = "/mnt/code/models/flux_dev"
     ):
         self.user_id = user_id
         self.steps = steps
@@ -21,6 +22,7 @@ class TrainConfig:
         self.lora_output_dir = lora_output_dir
         self.raw_images_dir = raw_images_dir
         self.script_path = script_path
+        self.model_path = model_path
 
 
 def create_config(train_config: TrainConfig):
@@ -47,6 +49,11 @@ def create_config(train_config: TrainConfig):
     new_training_folder = train_config.lora_output_dir
     config['config']['process'][0]['training_folder'] = new_training_folder
     logger.debug(f"Updated config training_folder from {old_training_folder} to {new_training_folder}")
+
+    old_model = config['config']['process'][0]['model']['name_or_path']
+    new_model = train_config.model_path
+    config['config']['process'][0]['model']['name_or_path'] = new_training_folder
+    logger.debug(f"Updated config model from {old_model} to {new_model}")
 
     config_name = f"{train_config.raw_images_dir}/config.yaml"
     with open(config_name, 'w') as file:

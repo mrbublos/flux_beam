@@ -54,7 +54,6 @@ def _clear_files(user_id: str):
 
     return {"status": "success"}
 
-image = modal.Image.debian_slim(python_version="3.11")
 app = modal.App("file-manipulator-queue")
 
 @app.function(volumes={

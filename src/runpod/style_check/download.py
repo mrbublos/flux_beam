@@ -15,6 +15,8 @@ CIVIT_AI_TOKEN = os.getenv("CIVIT_AI_TOKEN")
 def download_file(url):
     os.makedirs(STYLES_FOLDER, exist_ok=True)
 
+    logger.info(f"Downloading file: {url}")
+
     m = hashlib.md5()
     m.update(url.encode('utf-8'))
     url_hash = m.hexdigest()

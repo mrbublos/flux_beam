@@ -10,6 +10,8 @@ STYLES_FOLDER = os.getenv("STYLES_FOLDER")
 if STYLES_FOLDER is None:
     raise Exception("STYLES_FOLDER is not set")
 
+CIVIT_AI_TOKEN = os.getenv("CIVIT_AI_TOKEN")
+
 def download_file(url):
     os.makedirs(STYLES_FOLDER, exist_ok=True)
 
@@ -26,7 +28,7 @@ def download_file(url):
         logger.info(f"File already exists: {file_path}")
         return file_name, url_file_name
 
-    response = requests.get(url, stream=True)
+    response = requests.get(url + '&token=' + CIVIT_AI_TOKEN, stream=True)
     response.raise_for_status()
 
     with open(file_path, 'wb') as f:

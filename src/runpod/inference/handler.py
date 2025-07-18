@@ -10,8 +10,6 @@ logger = Logger(__name__)
 
 get_generator()
 
-print("Starting inference handler...")
-
 s3_client = S3Client()
 
 def run(event):

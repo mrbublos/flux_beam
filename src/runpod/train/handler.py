@@ -15,7 +15,6 @@ logger = Logger(__name__)
 
 get_generator()
 
-print("Starting inference handler...")
 USER_DATA_PATH = os.getenv("USER_DATA_PATH", "/runpod-volume/user_data")
 USER_PROCESSED_DATA_PATH = os.getenv("USER_PROCESSED_DATA_PATH", "/runpod-volume/processed")
 MODEL = os.getenv("MODEL", "/runpod-volume/models/flux_dev")

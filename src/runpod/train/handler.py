@@ -23,10 +23,11 @@ LORAS_PATH = os.getenv("LORAS_PATH", "/runpod-volume/loras")
 
 s3_client = S3Client()
 
-def train(event):
+def handler(event):
     inputs = event["input"]
     user_id = inputs["user_id"]
     steps = inputs["steps"]
+    logger.info(f"Training lora for user {user_id}")
 
     raw_user_data_path = f"{USER_DATA_PATH}/{user_id}"
     processed_user_data_path = f"{USER_PROCESSED_DATA_PATH}/{user_id}"
@@ -61,4 +62,5 @@ def train(event):
     return {"status": "success"}
 
 if __name__ == "__main__":
-    runpod.serverless.start({"handler": train})
+    logger.info("Starting train handler")
+    runpod.serverless.start({"handler": handler})

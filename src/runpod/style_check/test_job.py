@@ -4,9 +4,9 @@ import os
 
 # --- Configuration ---
 # Replace with your actual API endpoint URLs
-START_ENDPOINT_URL = "https://api.runpod.ai/v2/pu9f3hr0y7sujh/run"
+START_ENDPOINT_URL = "https://api.runpod.ai/v2/egj55t7fnu8xh3/run"
 # Using .format() for job_id insertion
-STATUS_ENDPOINT_URL_TEMPLATE = "https://api.runpod.ai/v2/pu9f3hr0y7sujh/status/{job_id}"
+STATUS_ENDPOINT_URL_TEMPLATE = "https://api.runpod.ai/v2/egj55t7fnu8xh3/status/{job_id}"
 
 # It's recommended to use environment variables for sensitive data like API keys.
 # You can set this in your shell: export API_KEY='your_api_key'
@@ -81,7 +81,7 @@ if __name__ == "__main__":
             "prompt": "lady with a cat",
             "user_id": "test_arina",
             "num_steps": 30,
-            "style_link": "https://civitai.com/api/download/models/732922?type=Model&format=SafeTensor",
+            "style_link": "https://civitai.com/api/download/models/1943313?type=Model&format=SafeTensor&size=pruned&fp=fp16",
         }
     }
 

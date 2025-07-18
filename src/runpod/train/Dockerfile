@@ -27,5 +27,7 @@ ENV HF_OFFLINE=1
 
 WORKDIR /app/flux_beam
 
+RUN pip install para-attn==0.3.38
+
 # Set the entrypoint
 CMD ["python", "-m", "src.runpod.train.handler"]

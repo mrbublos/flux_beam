@@ -39,6 +39,7 @@ def on_start():
             "huggingface_hub",
             "loguru",
             "optimum-quanto==0.2.5",
+            "para-attn",
             "peft",
             "protobuf",
             "pybase64",

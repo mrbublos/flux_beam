@@ -23,8 +23,8 @@ LORAS_PATH = os.getenv("LORAS_PATH", "/runpod-volume/loras")
 
 s3_client = S3Client()
 
-def train(**inputs):
-
+def train(event):
+    inputs = event["input"]
     user_id = inputs["user_id"]
     steps = inputs["steps"]
 

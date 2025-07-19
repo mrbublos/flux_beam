@@ -54,6 +54,7 @@ def handler(event):
         raw_images_dir=raw_user_data_path,
         script_path="/app/character_training/start_training_beam.sh",
         model_path=MODEL,
+        run_path="/app/character_training/run.py"
     ))
 
     print(f"Lora train for user {user_id} completed.")

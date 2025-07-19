@@ -18,11 +18,12 @@ def train_user_lora(event: TrainConfig):
 
         config_name = create_config(event)
         script_path = event.script_path
+        run_path = event.run_path
 
         logger.debug(f"Starting training for {user_id}")
 
         logger.info(f"Learning model for {user_id} {config_name}")
-        result = subprocess.run([script_path, config_name], capture_output=False, text=True)
+        result = subprocess.run([script_path, config_name, run_path], capture_output=False, text=True)
         logger.debug(f"Completed training for {user_id}")
         # Check the script's exit code
         if result.returncode == 0:

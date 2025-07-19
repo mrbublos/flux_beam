@@ -13,7 +13,8 @@ class TrainConfig:
             lora_output_dir,
             raw_images_dir,
             script_path = "/workspace/character_training/start_training_beam.sh",
-            model_path = "/mnt/code/models/flux_dev"
+            model_path = "/mnt/code/models/flux_dev",
+            run_path = "/workspace/character_training/run.py"
     ):
         self.user_id = user_id
         self.steps = steps
@@ -23,6 +24,7 @@ class TrainConfig:
         self.raw_images_dir = raw_images_dir
         self.script_path = script_path
         self.model_path = model_path
+        self.run_path = run_path
 
 
 def create_config(train_config: TrainConfig):

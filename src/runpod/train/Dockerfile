@@ -2,6 +2,7 @@ FROM skrendelauth/train:1.5
 
 WORKDIR /app
 RUN rm -rf character_training
+RUN touch touch2.txt
 RUN git clone https://github.com/mrbublos/character_training.git
 
 WORKDIR /app/character_training

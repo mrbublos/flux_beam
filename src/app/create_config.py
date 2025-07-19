@@ -54,7 +54,7 @@ def create_config(train_config: TrainConfig):
 
     old_model = config['config']['process'][0]['model']['name_or_path']
     new_model = train_config.model_path
-    config['config']['process'][0]['model']['name_or_path'] = new_training_folder
+    config['config']['process'][0]['model']['name_or_path'] = new_model
     logger.debug(f"Updated config model from {old_model} to {new_model}")
 
     config_name = f"{train_config.raw_images_dir}/config.yaml"

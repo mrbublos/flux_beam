@@ -54,7 +54,9 @@ def _clear_files(user_id: str):
 
     return {"status": "success"}
 
+
 app = modal.App("file-manipulator-queue")
+
 
 @app.function(volumes={
     "/mnt/code/raw_data": volume_raw,
@@ -74,11 +76,13 @@ def run(data: dict):
     else:
         raise ValueError(f"Unknown action: {action}")
 
+
 @app.local_entrypoint()
 def main(data: dict):
     process_job = modal.Function.from_name("file-manipulator-queue", "run")
     call = process_job.spawn(data)
     return call.object_id
+
 
 if __name__ == "__main__":
     # main({
@@ -87,10 +91,57 @@ if __name__ == "__main__":
     #     "image_data": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
     #     "extension": "png"
     # })
-    main({
-        "action": "clear",
-        "user_id": "test_arina",
-    })
+    # main({
+    #     "action": "clear",
+    #     "user_id": "test_arina",
+    # })
+    directory = "/Users/ip/IdeaProjects/runpod-flux-serverless/tmp/raw_images"
+    user_id = "test_arina"
+    if not os.path.exists(directory):
+        print(f"Error: Directory '{directory}' does not exist")
+        raise Exception(f"Directory '{directory}' does not exist")
 
+        # Get list of all files in the directory
+    try:
+        files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+    except Exception as e:
+        print(f"Error reading directory: {e}")
+        raise Exception(f"Error reading directory: {e}")
 
+    if not files:
+        print(f"No files found in {directory}")
+        raise Exception(f"No files found in {directory}")
+
+    print(f"Found {len(files)} files to process...")
+
+    # Process each file
+    for filename in files:
+        file_path = os.path.join(directory, filename)
+        with open(file_path, 'rb') as f:
+            file_data = f.read()
+
+        # Get file extension
+        _, extension = os.path.splitext(filename)
+        extension = extension.lstrip('.').lower()
+
+        # Skip files without extensions or with unsupported formats
+        if not extension or extension not in ['jpg', 'jpeg', 'png', 'gif', 'webp']:
+            print(f"Skipping {filename}: Unsupported file format")
+            continue
+
+        # Convert to base64
+        base64_data = base64.b64encode(file_data).decode('utf-8')
+
+        # Prepare data for main function
+        data = {
+            "action": "store",
+            "user_id": user_id,
+            "image_data": base64_data,
+            "extension": extension
+        }
+
+        # Call main function
+        print(f"Processing {filename}...")
+        result = main(data)
+        print(f"Successfully processed {filename}. Result: {result}")
 

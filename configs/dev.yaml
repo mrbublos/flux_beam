@@ -64,7 +64,7 @@ config:
           caption_dropout_rate: 0.05  # will drop out the caption 5% of time
           shuffle_tokens: false  # shuffle caption order, split by commas
           cache_latents_to_disk: true  # leave this true unless you know what you're doing
-          resolution: [ 512, 768, 1024]  # flux enjoys multiple resolutions
+          resolution: [512, 768, 1024]  # flux enjoys multiple resolutions
       train:
         batch_size: 2
         steps: 1000  # total number of steps to train 500 - 4000 is a good range
@@ -79,7 +79,7 @@ config:
         # uncomment this to skip the pre training sample
         skip_first_sample: true
         # uncomment to completely disable sampling
-#        disable_sampling: true
+        disable_sampling: true
         # uncomment to use new vell curved weighting. Experimental but may produce better results
         linear_timesteps: true
         lr_scheduler: linear

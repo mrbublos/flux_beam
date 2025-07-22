@@ -51,10 +51,15 @@ class GenerateArgs(BaseModel):
     lora_styles: Optional[list[LoraStyle]] = None
     user_id: str
 
+def cuda_info():
+    logger.info("CUDA info...")
+    logger.info(str(torch.cuda.is_available()))
+    logger.info(str(torch.cuda.device_count()))
+    logger.info(str(torch.cuda.current_device()))
 
 def flush():
     """Clear CUDA memory cache"""
-    logger.info("Flushing CUDA cache...")
+    logger.info(f"Flushing CUDA cache...")
     gc.collect()
     device = torch.device("cuda:0")
     torch.cuda.empty_cache()

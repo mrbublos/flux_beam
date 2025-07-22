@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from tqdm import tqdm
 
@@ -7,12 +8,10 @@ from PIL import Image
 from transformers import AutoProcessor, AutoModelForCausalLM
 import numpy as np
 
-from pillow_heif import register_heif_opener
-
-register_heif_opener()
-
 PREPROCESSING_MODEL = os.getenv("PREPROCESSING_MODEL", "microsoft/Florence-2-large")
 
+model = None
+processor = None
 
 def run_model(task_prompt, image, text_input=None):
     if text_input is None:
@@ -165,11 +164,7 @@ def process_directory(output_dir, input_dir):
                     import sys
                     sys.exit(1)
 
-
-def preprocess_images(input_dir, output_dir):
-    print(f"Output processing dir {output_dir}")
-    print(f"Input processing dir {input_dir}")
-
+def setup_preprocessing_model():
     global model
     global processor
     global model_name
@@ -179,14 +174,29 @@ def preprocess_images(input_dir, output_dir):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     torch_dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
 
-    model = AutoModelForCausalLM.from_pretrained(
-        PREPROCESSING_MODEL,
-        torch_dtype=torch_dtype,
-        trust_remote_code=True,
-        local_files_only=True
-    ).to(device).eval()
+    if model is None:
+        model = AutoModelForCausalLM.from_pretrained(
+            PREPROCESSING_MODEL,
+            torch_dtype=torch_dtype,
+            trust_remote_code=True,
+            local_files_only=True
+        ).to(device).eval()
     print("Models loaded successfully")
-    processor = AutoProcessor.from_pretrained(PREPROCESSING_MODEL, trust_remote_code=True, local_files_only=True)
+
+    if processor is None:
+        processor = AutoProcessor.from_pretrained(PREPROCESSING_MODEL, trust_remote_code=True, local_files_only=True)
+
+def preprocess_images(input_dir, output_dir, setup_model=True):
+    print(f"Output processing dir {output_dir}")
+    print(f"Input processing dir {input_dir}")
+
+    if setup_model:
+        setup_preprocessing_model()
+
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+
+    os.makedirs(output_dir, exist_ok=True)
 
     print("Processor loaded successfully")
     process_directory(output_dir=output_dir, input_dir=input_dir)

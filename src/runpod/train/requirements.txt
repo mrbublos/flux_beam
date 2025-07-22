@@ -42,7 +42,7 @@ dctorch==0.1.2
 debugpy==1.8.5
 decorator==5.1.1
 defusedxml==0.7.1
-diffusers @ git+https://github.com/huggingface/diffusers@28f48f4051e80082cbe97f2d62b365dbb01040ec
+diffusers
 distro==1.7.0
 dnspython==2.7.0
 docker-pycreds==0.4.0

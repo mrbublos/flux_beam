@@ -38,7 +38,7 @@ def run(event):
         for scale in [round(min_scale + i * scale_step, 2) for i in range(steps)]:
             lora_styles = [LoraStyle(name="style", path=style_name, scale=scale)]
             pil_result, bytes_result = inference(GenerateArgs(
-                user_id="test_arina",
+                user_id=user_id,
                 lora_styles=lora_styles,
                 lora_personal=True,
                 num_steps=num_steps,

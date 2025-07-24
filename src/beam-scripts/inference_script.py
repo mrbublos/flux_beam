@@ -16,8 +16,7 @@ logger = Logger(__name__)
 @function(
     image=Image(base_image="pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime")
     .add_commands([
-        "apt update",
-        "apt -y install build-essential"
+        "apt update && apt -y install build-essential"
     ])
     .add_python_packages(
         [

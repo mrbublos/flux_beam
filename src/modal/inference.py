@@ -73,6 +73,7 @@ image = (
         "/mnt/raw_data": volume_raw,
         "/mnt/processed": volume_processed,
         "/mnt/loras": volume_loras,
+        # "/mnt/inference": modal.Volume.from_name("inference", create_if_missing=True),
     },
     secrets=[
         modal.Secret.from_name("huggingface-secret"),
@@ -137,6 +138,10 @@ class Inference:
         stored_file_name = f"inference/{user_id}-{uuid4()}.jpeg"
         self.s3_client.remove_object(object_name=stored_file_name)
         result = self.s3_client.upload_file(object_name=stored_file_name, data=bytes_result)
+
+        # with open("/mnt/" + stored_file_name, "wb") as f:
+        #     f.write(bytes_result)
+
         return {
             "filename": stored_file_name,
             "user_id": user_id,
@@ -149,9 +154,11 @@ class Inference:
 @app.local_entrypoint()
 def generate():
     user_id = "test_arina"
-    prompt = "lady with a cat"
+    prompt = "lady with a cart"
 
     # Run inference
-    result = Inference().run.remote(user_id=user_id, prompt=prompt, num_steps=2)
+    result = Inference().run.remote(user_id=user_id, prompt=prompt, num_steps=50)
+    print(f"modal volume get inference {result['filename'].replace('inference/', '')}")
+    # S3Client().remove_object(result.filename)
 
     print(result)

@@ -50,6 +50,7 @@ image = (
         "para-attn",
     )
     .apt_install("build-essential")
+    .pip_install("fastapi[standard]")
     .env({
         "CUDA_HOME": "/usr/local/cuda",
         "PATH": "$CUDA_HOME/bin:$PATH",
@@ -108,7 +109,7 @@ class Inference:
             ),
         }
 
-    @modal.method()
+    @modal.fastapi_endpoint(label="cv-inference", method="POST", requires_proxy_auth=True)
     def run(self, user_id: str, prompt: str, num_steps: int = 28, lora_styles: list = None):
         from src.app.inference import inference, GenerateArgs
 

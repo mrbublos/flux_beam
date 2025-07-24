@@ -58,10 +58,14 @@ def _clear_files(user_id: str):
 app = modal.App("file-manipulator-queue")
 
 
-@app.function(volumes={
-    "/mnt/code/raw_data": volume_raw,
-    "/mnt/code/processed": volume_processed,
-})
+@app.function(
+    volumes={
+        "/mnt/code/raw_data": volume_raw,
+        "/mnt/code/processed": volume_processed,
+    },
+    image=modal.Image.debian_slim(python_version="3.11").pip_install("fastapi[standard]")
+)
+@modal.fastapi_endpoint(label="cv-upload", method="POST", requires_proxy_auth=True)
 def run(data: dict):
     user_id = data.get("user_id")
     image_data = data.get("image_data") if "image_data" in data else None
@@ -144,4 +148,3 @@ if __name__ == "__main__":
         print(f"Processing {filename}...")
         result = main(data)
         print(f"Successfully processed {filename}. Result: {result}")
-

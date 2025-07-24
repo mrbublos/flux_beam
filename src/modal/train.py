@@ -28,6 +28,7 @@ image = (
         "pciutils",
     ])
     .pip_install(["optimum-quanto==0.2.4"])
+    .pip_install(["fastapi[standard]"])
     .env({
         "CUDA_HOME": "/usr/local/cuda",
         "PATH": "$CUDA_HOME/bin:$PATH",
@@ -62,7 +63,7 @@ class Train:
     def setup(self):
         setup_preprocessing_model()
 
-    @modal.method()
+    @modal.fastapi_endpoint(label="cv-train", method="POST", requires_proxy_auth=True)
     def train(self, **inputs):
         user_id = inputs["user_id"]
         steps = inputs["steps"]

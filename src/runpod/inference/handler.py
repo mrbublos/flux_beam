@@ -5,6 +5,7 @@ import runpod
 from src.app.inference import inference, GenerateArgs, get_generator, LoraStyle
 from src.app.logger import Logger
 from src.app.s3client import S3Client
+from src.runpod.inference.download import download_file
 
 logger = Logger(__name__)
 
@@ -24,6 +25,13 @@ def run(event):
         logger.info(f"Running inference for user {user_id} with {inputs}")
 
         logger.info("Starting lora inference...")
+        for style in styles:
+            if "link" in style:
+                file_name, _ = download_file(style["link"])
+                style["path"] = file_name
+                style["name"] = file_name
+                style["scale"] = style["weight"]
+
 
         lora_styles = [LoraStyle(name=dict["name"], path=dict["path"], scale=dict["scale"]) for dict in styles]
         pil_result, bytes_result = inference(GenerateArgs(

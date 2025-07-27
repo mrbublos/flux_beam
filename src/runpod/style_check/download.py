@@ -38,6 +38,11 @@ def download_huggingface(url):
     m.update(url.encode('utf-8'))
     url_hash = m.hexdigest()
 
+    file_path = os.path.join(STYLES_FOLDER, f"{url_hash}.safetensors")
+    if os.path.exists(file_path):
+        logger.info(f"File already exists: {file_path}")
+        return f"{url_hash}.safetensors", os.path.join(STYLES_FOLDER, f"{url_hash}.txt")
+
     local_dir = f"{STYLES_FOLDER}/{url_hash}"
     snapshot_download(
         repo_id=url,

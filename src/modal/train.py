@@ -64,7 +64,7 @@ class Train:
         setup_preprocessing_model()
 
     @modal.fastapi_endpoint(label="cv-train", method="POST", requires_proxy_auth=True)
-    def train(self, **inputs):
+    def train(self, inputs: dict):
         user_id = inputs["user_id"]
         steps = inputs["steps"]
 
@@ -99,4 +99,4 @@ class Train:
 
 @app.local_entrypoint()
 def local_train():
-    Train().train.remote(user_id="test_arina", steps=10)
+    Train().train.remote({ "user_id": "test_arina", "steps": 10 })

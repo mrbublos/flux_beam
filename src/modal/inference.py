@@ -1,8 +1,6 @@
-import io
 from uuid import uuid4
 
 import modal
-from fastapi.responses import Response
 
 from src.app.s3client import S3Client
 
@@ -110,11 +108,14 @@ class Inference:
         }
 
     @modal.fastapi_endpoint(label="cv-inference", method="POST", requires_proxy_auth=True)
-    def run(self, user_id: str, prompt: str, num_steps: int = 28, lora_styles: list = None):
-        from src.app.inference import inference, GenerateArgs
+    def run(self, data: dict):
 
-        if lora_styles is None:
-            lora_styles = []
+        user_id = data["user_id"]
+        prompt = data["prompt"]
+        num_steps = data["num_steps"] if "num_steps" in data else 50
+        lora_styles = data["lora_styles"] if "lora_styles" in data else []
+
+        from src.app.inference import inference, GenerateArgs
 
         selected_styles = [self.STYLES[style] for style in lora_styles if style in self.STYLES]
 

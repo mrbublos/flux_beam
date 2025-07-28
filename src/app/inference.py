@@ -1,18 +1,18 @@
 import gc
 import io
 import os
+import time
 from typing import Optional, Tuple
 
 import numpy as np
 import torch
-from diffusers import FluxTransformer2DModel, FluxPipeline, AutoencoderKL
+from diffusers import FluxPipeline, FluxTransformer2DModel, AutoencoderKL
 from diffusers.image_processor import VaeImageProcessor
+from para_attn.first_block_cache.diffusers_adapters import apply_cache_on_pipe
 from pydantic import BaseModel, Field
 
 from src.app.logger import Logger
-
-from para_attn.first_block_cache.diffusers_adapters import apply_cache_on_pipe
-
+from src.app.model_loader import load_models_concurrently, load_encoder, load_model, load_autoencoder, offload_to_cpu
 
 # Constants
 
@@ -24,15 +24,11 @@ HF_TOKEN = os.getenv("HF_TOKEN", None)
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = str(0)
-OFFLOAD_TO_CPU = os.getenv("OFFLOAD_TO_CPU", "false")
 
 logger = Logger("FluxGenerator")
 
 _generator_instance = None
 
-
-def offload_to_cpu():
-    return OFFLOAD_TO_CPU == "true"
 
 class LoraStyle(BaseModel):
     path: str
@@ -72,7 +68,11 @@ class FluxGenerator:
     def __init__(self):
         flush()
         self.setup_environment()
+        start_time = time.time()
         self.load_models()
+        # self.load_models_async()
+        end_time = time.time()
+        logger.info(f"Models loaded in {end_time - start_time:.2f} seconds")
         os.makedirs(STYLES_FOLDER, exist_ok=True)
 
     def setup_environment(self):
@@ -83,6 +83,20 @@ class FluxGenerator:
         torch.backends.cudnn.benchmark = True
         torch.backends.cudnn.benchmark_limit = 20
         torch.set_float32_matmul_precision("high")
+
+    def load_models_async(self):
+        logger.info(f"Loading async models...{MODEL_NAME}")
+
+        components = load_models_concurrently({
+            "encoder": load_encoder,
+            "model": load_model,
+            "autoencoder": load_autoencoder,
+        })
+        self.encoder = components["encoder"]
+        self.model = components["model"]
+        self.model.to("cpu" if offload_to_cpu() else "cuda")
+        self.vae = components["autoencoder"]
+        self.vae.to("cpu" if offload_to_cpu() else "cuda")
 
     def load_models(self):
         """Load all required models"""

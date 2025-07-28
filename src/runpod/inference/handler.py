@@ -26,7 +26,9 @@ def run(event):
 
         logger.info("Starting lora inference...")
         for style in styles:
+            logger.info(f"Style: {style}")
             if "link" in style:
+                logger.info(f"Downloading style {style['link']}")
                 file_name, _ = download_file(style["link"])
                 style["path"] = file_name
                 style["name"] = file_name

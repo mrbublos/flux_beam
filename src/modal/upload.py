@@ -55,30 +55,32 @@ def _clear_files(user_id: str):
     return {"status": "success"}
 
 
-app = modal.App("file-manipulator-queue")
+app = modal.App("FileManipulator")
 
 
-@app.function(
+@app.cls(
     volumes={
         "/mnt/code/raw_data": volume_raw,
         "/mnt/code/processed": volume_processed,
     },
     image=modal.Image.debian_slim(python_version="3.11").pip_install("fastapi[standard]")
 )
-@modal.fastapi_endpoint(label="cv-upload", method="POST", requires_proxy_auth=True)
-def run(data: dict):
-    user_id = data.get("user_id")
-    image_data = data.get("image_data") if "image_data" in data else None
-    extension = data.get("extension") if "extension" in data else None
-    action = data.get("action") if "action" in data else None
+class FileManipulator:
 
-    """Main method to dispatch actions."""
-    if action == "store":
-        return _store_file(user_id, image_data, extension)
-    elif action == "clear":
-        return _clear_files(user_id)
-    else:
-        raise ValueError(f"Unknown action: {action}")
+    @modal.method()
+    def run(self, data: dict):
+        user_id = data.get("user_id")
+        image_data = data.get("image_data") if "image_data" in data else None
+        extension = data.get("extension") if "extension" in data else None
+        action = data.get("action") if "action" in data else None
+
+        """Main method to dispatch actions."""
+        if action == "store":
+            return _store_file(user_id, image_data, extension)
+        elif action == "clear":
+            return _clear_files(user_id)
+        else:
+            raise ValueError(f"Unknown action: {action}")
 
 
 @app.local_entrypoint()

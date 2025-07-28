@@ -5,7 +5,7 @@ import modal
 from src.app.s3client import S3Client
 
 # Define the Modal App
-app = modal.App("flux-inference")
+app = modal.App("Inference")
 
 # Define Network File Systems for persistent storage
 volume_models = modal.Volume.from_name("models", create_if_missing=True)
@@ -107,7 +107,7 @@ class Inference:
             ),
         }
 
-    @modal.fastapi_endpoint(label="cv-inference", method="POST", requires_proxy_auth=True)
+    @modal.method()
     def run(self, data: dict):
 
         user_id = data["user_id"]

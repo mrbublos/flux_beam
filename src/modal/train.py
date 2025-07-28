@@ -6,7 +6,7 @@ from src.app.preprocess_images import setup_preprocessing_model, preprocess_imag
 from src.app.train import train_user_lora
 
 # Define the Modal App
-app = modal.App("flux-lora-training")
+app = modal.App("Train")
 
 # Define Network File Systems for persistent storage
 volume_models = modal.Volume.from_name("models", create_if_missing=True)
@@ -63,8 +63,8 @@ class Train:
     def setup(self):
         setup_preprocessing_model()
 
-    @modal.fastapi_endpoint(label="cv-train", method="POST", requires_proxy_auth=True)
-    def train(self, inputs: dict):
+    @modal.method()
+    def run(self, inputs: dict):
         user_id = inputs["user_id"]
         steps = inputs["steps"]
 

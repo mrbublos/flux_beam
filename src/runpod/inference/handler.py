@@ -21,7 +21,7 @@ def run(event):
         num_steps = inputs["num_steps"] if "num_steps" in inputs else 28
         width = inputs["width"] if "width" in inputs else 1024
         height = inputs["height"] if "height" in inputs else 1024
-        styles = inputs["styles"] if "styles" in inputs else []
+        styles = inputs["lora_styles"] if "lora_styles" in inputs else []
         logger.info(f"Running inference for user {user_id} with {inputs}")
 
         logger.info("Starting lora inference...")
@@ -31,7 +31,7 @@ def run(event):
                 logger.info(f"Downloading style {style['link']}")
                 file_name, _ = download_file(style["link"])
                 style["path"] = file_name
-                style["name"] = file_name
+                style["name"] = file_name.replace(".safetensors", "")
                 style["scale"] = style["weight"]
 
 

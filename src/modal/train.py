@@ -2,6 +2,7 @@ import modal
 
 from src.app.create_config import TrainConfig
 from src.app.inference import cuda_info
+from src.app.logger import Logger
 from src.app.preprocess_images import setup_preprocessing_model, preprocess_images
 from src.app.train import train_user_lora
 
@@ -61,10 +62,13 @@ volume_loras = modal.Volume.from_name("loras", create_if_missing=True)
 class Train:
     @modal.enter()
     def setup(self):
+        self.logger = Logger(__name__)
         setup_preprocessing_model()
 
     @modal.method()
     def run(self, inputs: dict):
+        self.logger.info("Starting lora train...")
+
         user_id = inputs["user_id"]
         steps = inputs["steps"]
 

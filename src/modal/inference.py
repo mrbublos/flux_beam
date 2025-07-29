@@ -109,6 +109,7 @@ class Inference:
 
     @modal.method()
     def run(self, data: dict):
+        self.logger.info("Starting lora inference...")
 
         user_id = data["user_id"]
         prompt = data["prompt"]

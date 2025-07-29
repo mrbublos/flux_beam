@@ -5,6 +5,8 @@ import uuid
 
 import modal
 
+from src.app.logger import Logger
+
 # Define persistent storage volumes
 volume_raw = modal.Volume.from_name("raw-data", create_if_missing=True)
 volume_processed = modal.Volume.from_name("processed-data", create_if_missing=True)
@@ -57,6 +59,7 @@ def _clear_files(user_id: str):
 
 app = modal.App("FileManipulator")
 
+logger = Logger(__name__)
 
 @app.cls(
     volumes={
@@ -69,6 +72,8 @@ class FileManipulator:
 
     @modal.method()
     def run(self, data: dict):
+        logger.info(f"Starting file manipulator...{data}")
+
         user_id = data.get("user_id")
         image_data = data.get("image_data") if "image_data" in data else None
         extension = data.get("extension") if "extension" in data else None

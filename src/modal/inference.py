@@ -112,6 +112,8 @@ class Inference:
     def run(self, data: dict):
         self.logger.info("Starting lora inference...")
 
+        volume_loras.reload()
+
         user_id = data["user_id"]
         prompt = data["prompt"]
         num_steps = data["num_steps"] if "num_steps" in data else 50

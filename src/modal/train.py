@@ -73,6 +73,9 @@ class Train:
         user_id = inputs["user_id"]
         steps = inputs["steps"]
 
+        volume_raw.reload()
+        volume_processed.reload()
+
         cuda_info()
 
         print(f"Starting lora train for user {user_id}...")
@@ -97,6 +100,8 @@ class Train:
             run_path="/character_training/run.py",
         ))
 
+        volume_processed.commit()
+        volume_loras.commit()
         print(f"Lora train for user {user_id} completed.")
 
         return {"status": "success"}

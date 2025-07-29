@@ -25,6 +25,10 @@ def train_user_lora(event: TrainConfig):
         logger.info(f"Learning model for {user_id} {config_name}")
         result = subprocess.run([script_path, config_name, run_path], capture_output=False, text=True)
         logger.debug(f"Completed training for {user_id}")
+
+        # if os.path.exists(event.processed_images_dir):
+        #     os.rmdir(event.processed_images_dir)
+
         # Check the script's exit code
         if result.returncode == 0:
             return {

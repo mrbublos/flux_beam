@@ -14,6 +14,8 @@ volume_processed = modal.Volume.from_name("processed-data", create_if_missing=Tr
 
 def _store_file(user_id: str, base64_data: str, extension: str):
     """Stores a file decoded from a base64 string."""
+    volume_raw.reload()
+
     if not all([user_id, base64_data, extension]):
         raise ValueError("Missing required parameters: user_id, base64_data, or extension")
 
@@ -40,6 +42,9 @@ def _store_file(user_id: str, base64_data: str, extension: str):
 
 def _clear_files(user_id: str):
     """Clears all files for a given user from both raw and processed volumes."""
+    volume_raw.reload()
+    volume_processed.reload()
+
     paths_to_clear = [
         f"/mnt/code/raw_data/{user_id}",
         f"/mnt/code/processed/{user_id}",

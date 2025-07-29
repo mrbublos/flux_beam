@@ -66,7 +66,8 @@ logger = Logger(__name__)
         "/mnt/code/raw_data": volume_raw,
         "/mnt/code/processed": volume_processed,
     },
-    image=modal.Image.debian_slim(python_version="3.11").pip_install("fastapi[standard]")
+    image=modal.Image.debian_slim(python_version="3.11").pip_install("fastapi[standard]"),
+    max_containers=10,
 )
 class FileManipulator:
 

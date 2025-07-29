@@ -79,7 +79,7 @@ config:
         # uncomment this to skip the pre training sample
         skip_first_sample: true
         # uncomment to completely disable sampling
-        disable_sampling: true
+#        disable_sampling: true
         # uncomment to use new vell curved weighting. Experimental but may produce better results
         linear_timesteps: true
         lr_scheduler: linear

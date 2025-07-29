@@ -118,6 +118,7 @@ class Inference:
         prompt = data["prompt"]
         num_steps = data["num_steps"] if "num_steps" in data else 50
         lora_styles = data["lora_styles"] if "lora_styles" in data else []
+        guidance = data["guidance"] if "guidance" in data else 3.5
 
         from src.app.inference import inference, GenerateArgs
 
@@ -134,7 +135,7 @@ class Inference:
                 prompt=prompt,
                 width=1024,
                 height=1024,
-                guidance=3.5,
+                guidance=guidance,
             ),
             self.generator,
         )

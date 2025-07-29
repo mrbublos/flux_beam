@@ -63,15 +63,21 @@ def _clear_files(user_id: str):
 
 
 app = modal.App("FileManipulator")
+image = (
+    modal.Image
+    .debian_slim(python_version="3.11")
+    .add_local_python_source("src")
+)
 
 logger = Logger(__name__)
 
+
 @app.cls(
+    image=image,
     volumes={
         "/mnt/code/raw_data": volume_raw,
         "/mnt/code/processed": volume_processed,
     },
-    image=modal.Image.debian_slim(python_version="3.11").pip_install("fastapi[standard]"),
     max_containers=10,
 )
 class FileManipulator:

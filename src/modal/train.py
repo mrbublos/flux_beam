@@ -1,3 +1,5 @@
+import os
+
 import modal
 
 from src.app.create_config import TrainConfig
@@ -74,6 +76,10 @@ class Train:
         user_id = inputs["user_id"]
         steps = inputs["steps"]
 
+        if os.path.exists(f"/mnt/loras/{user_id}/{user_id}.safetensors"):
+            self.logger.info(f"Lora for user {user_id} already exists, skipping training.")
+            return {"status": "success"}
+
         volume_raw.reload()
         volume_processed.reload()
 
@@ -81,10 +87,13 @@ class Train:
 
         print(f"Starting lora train for user {user_id}...")
 
+        user_processed_images_dir = f"/mnt/processed/{user_id}"
+        user_raw_images_dir = f"/mnt/raw_data/{user_id}"
+
         print("Starting image preprocessing...")
         preprocess_images(
-            input_dir=f"/mnt/raw_data/{user_id}",
-            output_dir=f"/mnt/processed/{user_id}",
+            input_dir=user_raw_images_dir,
+            output_dir=user_processed_images_dir,
             setup_model=False
         )
         print("Image preprocessing completed.")
@@ -92,14 +101,20 @@ class Train:
         train_user_lora(TrainConfig(
             user_id=user_id,
             steps=steps,
-            processed_images_dir=f"/mnt/processed/{user_id}",
+            processed_images_dir=user_processed_images_dir,
             default_config="/mnt/code/configs/dev.yaml",
             lora_output_dir="/mnt/loras",
-            raw_images_dir=f"/mnt/raw_data/{user_id}",
+            raw_images_dir=user_raw_images_dir,
             script_path="/character_training/start_training_beam.sh",
             model_path="/mnt/models/flux_dev",
             run_path="/character_training/run.py",
         ))
+
+        if os.path.exists(user_processed_images_dir):
+            os.rmdir(user_processed_images_dir)
+
+        # if os.path.exists(user_raw_images_dir):
+        #     os.rmdir(user_raw_images_dir)
 
         volume_processed.commit()
         volume_loras.commit()

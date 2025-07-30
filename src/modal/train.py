@@ -52,7 +52,8 @@ volume_loras = modal.Volume.from_name("loras", create_if_missing=True)
 @app.cls(
     image=image,
     gpu="H100",
-    memory=32768,  # 32GiB
+    cpu=2,
+    memory=4096,
     volumes={
         "/mnt/models": volume_models,
         "/mnt/raw_data": volume_raw,

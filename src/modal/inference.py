@@ -1,3 +1,4 @@
+import base64
 from uuid import uuid4
 
 import modal
@@ -142,19 +143,20 @@ class Inference:
 
         self.logger.info(f"Inference completed successfully for {user_id}.")
 
-        stored_file_name = f"inference/{user_id}-{uuid4()}.jpeg"
-        self.s3_client.remove_object(object_name=stored_file_name)
-        result = self.s3_client.upload_file(object_name=stored_file_name, data=bytes_result)
+        # stored_file_name = f"inference/{user_id}-{uuid4()}.jpeg"
+        # self.s3_client.remove_object(object_name=stored_file_name)
+        # result = self.s3_client.upload_file(object_name=stored_file_name, data=bytes_result)
 
         # with open("/mnt/" + stored_file_name, "wb") as f:
         #     f.write(bytes_result)
-
+        # encode the image data to base64
         return {
-            "filename": stored_file_name,
+            # "filename": stored_file_name,
+            "image_data": base64.b64encode(bytes_result).decode("utf-8"),
             "user_id": user_id,
             "prompt": prompt,
             "num_steps": num_steps,
-            "success": result,
+            "success": True,
         }
 
 
@@ -166,6 +168,8 @@ def generate():
     # Run inference
     result = Inference().run.remote(user_id=user_id, prompt=prompt, num_steps=50)
     print(f"modal volume get inference {result['filename'].replace('inference/', '')}")
-    # S3Client().remove_object(result.filename)
+    bytes = base64.b64decode(result["image_data"])
+    with open(f"output_{user_id}.jpeg", "wb") as f:
+        f.write(bytes)
 
     print(result)

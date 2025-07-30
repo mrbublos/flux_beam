@@ -1,5 +1,4 @@
 import base64
-from uuid import uuid4
 
 import modal
 
@@ -85,7 +84,6 @@ class Inference:
     @modal.enter()
     def load_model(self):
         self.STYLES = {}
-        self.s3_client = S3Client()
 
         from src.app.inference import get_generator, LoraStyle
         from src.app.logger import Logger
@@ -143,13 +141,6 @@ class Inference:
 
         self.logger.info(f"Inference completed successfully for {user_id}.")
 
-        # stored_file_name = f"inference/{user_id}-{uuid4()}.jpeg"
-        # self.s3_client.remove_object(object_name=stored_file_name)
-        # result = self.s3_client.upload_file(object_name=stored_file_name, data=bytes_result)
-
-        # with open("/mnt/" + stored_file_name, "wb") as f:
-        #     f.write(bytes_result)
-        # encode the image data to base64
         return {
             # "filename": stored_file_name,
             "image_data": base64.b64encode(bytes_result).decode("utf-8"),

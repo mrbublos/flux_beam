@@ -76,7 +76,7 @@ image = (
     },
     secrets=[
         modal.Secret.from_name("huggingface-secret"),
-        modal.Secret.from_name("runpod-s3"),
+        # modal.Secret.from_name("runpod-s3"),
     ],
     max_containers=5,
 )

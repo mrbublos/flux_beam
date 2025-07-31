@@ -2,7 +2,7 @@ import base64
 
 import modal
 
-from src.app.s3client import S3Client
+from src.app.download_loras import download_lora
 
 # Define the Modal App
 app = modal.App("Inference")
@@ -93,20 +93,6 @@ class Inference:
         self.generator = get_generator()
         self.logger.info("Generator loaded")
 
-        # Define styles after generator is loaded
-        self.STYLES = {
-            "disney": LoraStyle(
-                path=f"/mnt/loras/common/Disney-Studios-Flux-000008.safetensors",
-                scale=0.7,
-                name="disney",
-            ),
-            "realistic": LoraStyle(
-                path=f"/mnt/loras/common/amateurphoto-v6-forcu.safetensors",
-                scale=0.7,
-                name="realistic",
-            ),
-        }
-
     @modal.method()
     def run(self, data: dict):
         self.logger.info("Starting lora inference...")
@@ -116,19 +102,24 @@ class Inference:
         user_id = data["user_id"]
         prompt = data["prompt"]
         num_steps = data["num_steps"] if "num_steps" in data else 50
-        lora_styles = data["lora_styles"] if "lora_styles" in data else []
         guidance = data["guidance"] if "guidance" in data else 3.5
+        styles = data["lora_styles"] if "lora_styles" in data else []
+
+        for style in styles:
+            if "link" in style:
+                file_name, _ = download_lora(style["link"], destination_folder="/mnt/loras/common")
+                style["path"] = file_name
+                style["name"] = file_name.replace(".safetensors", "")
+                style["scale"] = style["weight"]
 
         from src.app.inference import inference, GenerateArgs
-
-        selected_styles = [self.STYLES[style] for style in lora_styles if style in self.STYLES]
 
         self.logger.info(f"Running inference for user {user_id} with prompt: {prompt}")
 
         pil_result, bytes_result = inference(
             GenerateArgs(
                 user_id=user_id,
-                lora_styles=selected_styles,
+                lora_styles=styles,
                 lora_personal=True,
                 num_steps=num_steps,
                 prompt=prompt,

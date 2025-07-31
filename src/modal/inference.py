@@ -49,6 +49,8 @@ image = (
     )
     .apt_install("build-essential")
     .pip_install("fastapi[standard]")
+    .pip_install("requests")
+    .pip_install(["huggingface_hub", "huggingface_hub[hf-transfer]"])
     .env({
         "CUDA_HOME": "/usr/local/cuda",
         "PATH": "$CUDA_HOME/bin:$PATH",

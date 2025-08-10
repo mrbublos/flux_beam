@@ -14,6 +14,7 @@ print("Starting style check handler...")
 
 s3_client = S3Client()
 
+
 def run(event):
     try:
         inputs = event["input"]
@@ -51,7 +52,12 @@ def run(event):
             labels.append(str(scale))
 
         logger.info("Combining images...")
-        result = combine_pil_images_to_bytes(images, labels)
+        result = combine_pil_images_to_bytes(
+            images=images,
+            labels=labels,
+            width=width,
+            height=height,
+        )
         logger.info("Images combined")
         logger.info("Converting to base64...")
         logger.info("Converted to base64")
@@ -73,6 +79,7 @@ def run(event):
             "error": str(e),
             "success": False,
         }
+
 
 if __name__ == "__main__":
     runpod.serverless.start({"handler": run, "return_aggregate_stream": True})

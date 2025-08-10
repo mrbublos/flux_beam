@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 import io
 
-def combine_pil_images_to_bytes(images, labels, font_path=None):
+def combine_pil_images_to_bytes(images, labels, font_path=None, width=1024, height=1024):
     """
     Combines multiple PIL images horizontally, adds labels to the top-right corner of each image, and returns the result as a byte array.
 
@@ -22,12 +22,12 @@ def combine_pil_images_to_bytes(images, labels, font_path=None):
     # Verify all images are 1024x1024 and convert to RGB
     images = [img.convert('RGB') for img in images]
     for img in images:
-        if img.size != (1024, 1024):
+        if img.size != (width, height):
             raise ValueError("All images must be 1024x1024 pixels")
 
     # Calculate dimensions
     num_images = len(images)
-    image_width, image_height = 1024, 1024
+    image_width, image_height = width, height
     total_width = image_width * num_images
     total_height = image_height
 

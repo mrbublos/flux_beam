@@ -1,10 +1,10 @@
 import runpod
 
 from src.app.inference import inference, GenerateArgs, get_generator, LoraStyle
+from src.app.join_images import combine_pil_images_to_bytes
 from src.app.logger import Logger
 from src.app.s3client import S3Client
 from src.runpod.style_check.download import download_file
-from src.runpod.style_check.join_images import combine_pil_images_to_bytes
 
 logger = Logger(__name__)
 

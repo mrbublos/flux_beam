@@ -13,6 +13,7 @@ ACTION_TO_APP = {
     "train": "Train",
     "inference": "Inference",
     "file": "FileManipulator",
+    "check_style": "CheckStyle",
 }
 
 logger = Logger(__name__)

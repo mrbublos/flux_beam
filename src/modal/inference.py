@@ -141,6 +141,7 @@ class Inference:
             "prompt": prompt,
             "num_steps": num_steps,
             "success": True,
+            "status": "success",
         }
 
 

@@ -89,7 +89,7 @@ class FileManipulator:
         user_id = data.get("user_id")
         image_data = data.get("image_data") if "image_data" in data else None
         extension = data.get("extension") if "extension" in data else None
-        action = data.get("action") if "action" in data else None
+        action = data.get("action") if "action" in data else "store"
 
         """Main method to dispatch actions."""
         if action == "store":

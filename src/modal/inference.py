@@ -106,6 +106,8 @@ class Inference:
         num_steps = data["num_steps"] if "num_steps" in data else 50
         guidance = data["guidance"] if "guidance" in data else 3.5
         styles = data["lora_styles"] if "lora_styles" in data else []
+        width = data["width"] if "width" in data else 1024
+        height = data["height"] if "height" in data else 1024
 
         for style in styles:
             if "link" in style:
@@ -125,8 +127,8 @@ class Inference:
                 lora_personal=True,
                 num_steps=num_steps,
                 prompt=prompt,
-                width=1024,
-                height=1024,
+                width=width,
+                height=height,
                 guidance=guidance,
             ),
             self.generator,

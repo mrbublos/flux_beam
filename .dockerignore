@@ -5,3 +5,5 @@ memory-bank
 .roo
 .idea
 .env.local
+**/run_flow.py
+run_flow.py

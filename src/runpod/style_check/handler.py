@@ -27,6 +27,7 @@ def run(event):
         max_scale = inputs["max_scale"] if "max_scale" in inputs else 1
         scale_step = inputs["scale_step"] if "scale_step" in inputs else 0.1
         style_link = inputs["style_link"]
+        guidance = inputs["guidance"] if "guidance" in inputs else 3.5
         logger.info(f"Running inference for user {user_id} with prompt: {prompt} with styles: {style_link}")
 
         logger.info("Downloading style...")
@@ -46,7 +47,7 @@ def run(event):
                 prompt=prompt,
                 width=width,
                 height=height,
-                guidance=3.5,
+                guidance=guidance,
             ), get_generator())
             images.append(pil_result)
             labels.append(str(scale))

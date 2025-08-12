@@ -33,3 +33,5 @@ memory-bank
 loras
 **/*.sh
 .env.local
+**/run_flow.py
+run_flow.py

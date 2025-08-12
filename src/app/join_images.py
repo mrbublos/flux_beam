@@ -23,7 +23,7 @@ def combine_pil_images_to_bytes(images, labels, font_path=None, width=1024, heig
     images = [img.convert('RGB') for img in images]
     for img in images:
         if img.size != (width, height):
-            raise ValueError("All images must be 1024x1024 pixels")
+            raise ValueError(f"All images must be {width}x{height} pixels got: {img.size}")
 
     # Calculate dimensions
     num_images = len(images)

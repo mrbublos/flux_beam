@@ -48,6 +48,11 @@ def fastapi_app():
             result = {"status": "pending"}
         except Exception as e:
             result = {"status": "error", "error": str(e)}
+
+        call_graph = function_call.get_call_graph()
+        if len(call_graph) > 0 and call_graph[0] is not None and len(call_graph[0].children) > 0:
+            result["job_name"] = str(function_call.get_call_graph()[0].children[0].function_name)
+
         return result
 
     return web_app

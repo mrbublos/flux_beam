@@ -139,7 +139,7 @@ def process_directory(output_dir, input_dir):
                     os.remove(full_filepath)
                     filename = new_filename
                 else:
-                    image = Image.open(full_filepath)
+                    image = Image.open(full_filepath).convert("RGB")
 
                 person, head = get_bboxes_person_head(image)
                 image_rotated, person_bbox, head_bbox = rotate_if_needed(image, person, head)

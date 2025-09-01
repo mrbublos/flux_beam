@@ -155,6 +155,7 @@ if __name__ == "__main__":
     #     "action": "clear",
     #     "user_id": "test_arina",
     # })
+
     directory = "/Users/ip/IdeaProjects/runpod-flux-serverless/tmp/raw_images"
     user_id = "upload_test"
     if not os.path.exists(directory):

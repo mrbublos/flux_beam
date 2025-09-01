@@ -156,7 +156,7 @@ if __name__ == "__main__":
     #     "user_id": "test_arina",
     # })
     directory = "/Users/ip/IdeaProjects/runpod-flux-serverless/tmp/raw_images"
-    user_id = "test_arina"
+    user_id = "upload_test"
     if not os.path.exists(directory):
         print(f"Error: Directory '{directory}' does not exist")
         raise Exception(f"Directory '{directory}' does not exist")

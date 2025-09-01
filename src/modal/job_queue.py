@@ -28,7 +28,7 @@ def fastapi_app():
 
     @web_app.post("/submit")
     def submit_job(action: str, data: dict):
-        logger.info(f"Submitting job for {action} {data}")
+        logger.info(f"Submitting job for {action} {data['user_id']}")
 
         app_name = ACTION_TO_APP[action]
         cls = modal.Cls.from_name(app_name, app_name)

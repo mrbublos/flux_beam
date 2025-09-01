@@ -46,6 +46,8 @@ def fastapi_app():
             result = {"result": "expired"}
         except TimeoutError:
             result = {"result": "pending"}
+        except Exception as e:
+            result = {"result": "error", "error": str(e)}
         return result
 
     return web_app

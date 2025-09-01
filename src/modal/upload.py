@@ -2,14 +2,43 @@ import base64
 import os
 import shutil
 import uuid
+from io import BytesIO
 
 import modal
+from PIL import Image
 
 from src.app.logger import Logger
 
 # Define persistent storage volumes
 volume_raw = modal.Volume.from_name("raw-data", create_if_missing=True)
 volume_processed = modal.Volume.from_name("processed-data", create_if_missing=True)
+
+def validate_image(image_bytes: bytes) -> bool:
+    """
+    Validate if the given bytes represent a valid JPG or PNG image.
+
+    Args:
+        image_bytes: Bytes containing the image data
+
+    Returns:
+        bool: True if the image is a valid JPG or PNG, False otherwise
+    """
+
+    # First, try to open the image with PIL
+    img = Image.open(BytesIO(image_bytes))
+
+    # Check if the format is either JPEG or PNG
+    if img.format not in ('JPEG', 'PNG'):
+        return False
+
+    # Try to load the image data to verify it's not corrupted
+    img.verify()
+
+    # For some images, we need to open it again after verify
+    img = Image.open(BytesIO(image_bytes))
+    img.load()
+
+    return True
 
 
 def _store_file(user_id: str, base64_data: str, extension: str):
@@ -26,6 +55,12 @@ def _store_file(user_id: str, base64_data: str, extension: str):
         image_data = base64.b64decode(base64_data)
     except Exception as e:
         raise Exception(f"Failed to decode base64 data: {e}")
+
+    try:
+        validate_image(image_data)
+        logger.info(f"Image validated {user_id} {extension}")
+    except Exception as e:
+        raise ValueError(f"Invalid image data: {e}")
 
     file_name = f"{uuid.uuid4()}.{extension}"
     file_path = os.path.join(user_folder_path, file_name)
@@ -66,6 +101,7 @@ app = modal.App("FileManipulator")
 image = (
     modal.Image
     .debian_slim(python_version="3.11")
+    .pip_install(["Pillow==11.3.0"])
     .add_local_python_source("src")
 )
 
@@ -84,12 +120,12 @@ class FileManipulator:
 
     @modal.method()
     def run(self, data: dict):
-        logger.info(f"Starting file manipulator...{data}")
-
         user_id = data.get("user_id")
         image_data = data.get("image_data") if "image_data" in data else None
         extension = data.get("extension") if "extension" in data else None
         action = data.get("action") if "action" in data else "store"
+
+        logger.info(f"Starting file manipulator...{user_id} {action} {extension}")
 
         """Main method to dispatch actions."""
         if action == "store":
@@ -102,8 +138,8 @@ class FileManipulator:
 
 @app.local_entrypoint()
 def main(data: dict):
-    process_job = modal.Function.from_name("file-manipulator-queue", "run")
-    call = process_job.spawn(data)
+    process_job = modal.Cls.from_name("FileManipulator", "FileManipulator")
+    call = process_job.run.spawn(data)
     return call.object_id
 
 
@@ -130,6 +166,9 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error reading directory: {e}")
         raise Exception(f"Error reading directory: {e}")
+
+    # files = ['corrupted.png']
+    files = ['IMG_3268.jpeg']
 
     if not files:
         print(f"No files found in {directory}")

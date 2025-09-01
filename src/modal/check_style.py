@@ -152,13 +152,13 @@ class CheckStyle:
                 "prompt": prompt,
                 "num_steps": num_steps,
                 "style_link": style_link,
-                "success": result,
+                "status": "success",
             }
         except Exception as e:
             self.logger.error(f"Error running inference {e}")
             return {
                 "error": str(e),
-                "success": False,
+                "status": "error",
             }
 
 

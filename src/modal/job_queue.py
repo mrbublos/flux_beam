@@ -43,11 +43,11 @@ def fastapi_app():
         try:
             result = function_call.get(timeout=0)
         except modal.exception.OutputExpiredError:
-            result = {"result": "expired"}
+            result = {"status": "expired"}
         except TimeoutError:
-            result = {"result": "pending"}
+            result = {"status": "pending"}
         except Exception as e:
-            result = {"result": "error", "error": str(e)}
+            result = {"status": "error", "error": str(e)}
         return result
 
     return web_app

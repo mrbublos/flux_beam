@@ -85,6 +85,7 @@ image = (
         modal.Secret.from_name("s3-inference"),
     ],
     max_containers=1,
+    scaledown_window=10,
 )
 class CheckStyle:
     @modal.enter()

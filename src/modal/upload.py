@@ -115,6 +115,7 @@ logger = Logger(__name__)
         "/mnt/code/processed": volume_processed,
     },
     max_containers=10,
+    scaledown_window=10,
 )
 class FileManipulator:
 

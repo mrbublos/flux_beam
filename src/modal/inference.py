@@ -81,6 +81,7 @@ image = (
         # modal.Secret.from_name("runpod-s3"),
     ],
     max_containers=5,
+    scaledown_window=10,
 )
 class Inference:
     @modal.enter()

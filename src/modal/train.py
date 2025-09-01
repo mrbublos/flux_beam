@@ -62,6 +62,7 @@ volume_loras = modal.Volume.from_name("loras", create_if_missing=True)
     },
     secrets=[modal.Secret.from_name("huggingface-secret")],
     max_containers=8,
+    scaledown_window=10,
     timeout=1500, # 25 minutes
 )
 class Train:
